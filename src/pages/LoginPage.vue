@@ -21,7 +21,10 @@
           <div class="logo-text text-left text-primary">Online Quiz System</div>
         </div>
 
-        <q-form class="text-well q-gutter-sm items-start">
+        <q-form
+          class="text-well q-gutter-sm items-start"
+          @submit.prevent="handelLogin"
+        >
           <div class="welcome text-left text-primary text-weight-500">
             Welcome to Materialize! 👋🏻
             <div class="text-adv text-left text-primary text-weight-600px">
@@ -34,7 +37,6 @@
             class="login-input bg-white rounded q-pb-sm"
             :dense="dense"
             outlined=""
-
           />
           <q-input
             v-model="password"
@@ -76,4 +78,17 @@ import { ref } from 'vue';
 const email = ref<string>();
 const password = ref<string>();
 const rememberMe = ref<boolean>();
+import LoginFunc from '../functions/LoginFunc'
+const handelLogin = () => {
+  new LoginFunc()
+.executeAsync({email:email,password:password})
+.then((response)=>{
+  console.log(response.data);
+
+})
+.catch((error)=>{
+  console.log(error)
+
+})
+};
 </script>
