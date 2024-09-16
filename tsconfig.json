@@ -1,0 +1,32 @@
+{
+  "extends": "@quasar/app-vite/tsconfig-preset",
+  "compilerOptions": {
+    "baseUrl": ".",                    // Base URL for module resolution
+    "alwaysStrict": false,             // Disable strict mode code generation
+    "noImplicitAny": false,            // Allow 'any' type
+    "strict": false,                   // Disable all strict type-checking options
+    "strictNullChecks": false,         // Disable strict null checks
+    "strictFunctionTypes": false,      // Disable strict checking of function types
+    "strictPropertyInitialization": false, // Disable strict property initialization checks
+    "types": ["vite/client", "quasar"], // Include type definitions for Vite and Quasar
+    "skipLibCheck": true,              // Skip type checking for all declaration files
+    "forceConsistentCasingInFileNames": true, // Avoid issues with file case
+    "paths": {
+      "@/*": ["src/*"]                // Aliases for importing from the `src` folder
+    }
+  },
+  "exclude": [
+    "./dist",                         // Exclude the `dist` directory
+    "./.quasar",                      // Exclude the `.quasar` directory
+    "./node_modules",                 // Exclude `node_modules`
+    "./src-capacitor",                // Exclude `src-capacitor`
+    "./src-cordova",                  // Exclude `src-cordova`
+    "./quasar.config.*.temporary.compiled*" // Exclude temporary Quasar config files
+  ],
+  "include": [
+    "src/**/*.ts",                    // Include all TypeScript files in `src`
+    "src/**/*.d.ts",                  // Include all TypeScript declaration files in `src`
+    "src/**/*.tsx",                   // Include all TSX files in `src`
+    "src/**/*.vue"                    // Include all Vue files in `src`
+  ]
+}
