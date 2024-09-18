@@ -2,13 +2,6 @@ import { RouteRecordRaw } from 'vue-router';
 import RoutesPaths from './RoutesPaths';
 const routes: RouteRecordRaw[] = [
 
-      {
-        path: RoutesPaths.HOME,
-        component: () => import('pages/IndexPage.vue'),
-      },
-
-
-  
   {
     path: '/',
     component: () => import('../layouts/AccessLayout.vue'),
