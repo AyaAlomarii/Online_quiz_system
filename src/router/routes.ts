@@ -3,12 +3,33 @@ import RoutesPaths from './RoutesPaths';
 const routes: RouteRecordRaw[] = [
 
   {
-    path: '/',
+    path: '',
     component: () => import('../layouts/AccessLayout.vue'),
     children: [
       {
         path: RoutesPaths.LOGIN,
         component: () => import('../pages/LoginPage.vue'),
+      },
+
+    ],
+  },
+
+  {
+    path: '',
+    component: () => import('../layouts/StudentLayout.vue'),
+    children: [
+      {
+        path: RoutesPaths.STUDENT,
+        component: () => import('../pages/StudentPage.vue'),
+        children:[
+          {
+            path: RoutesPaths.QUIZ,
+            component: () => import('src/components/student/QuizComp.vue'),
+          }, {
+            path: RoutesPaths.RESULT,
+            component: () => import('src/components/student/ResultComp.vue'),
+          },
+        ]
       },
 
     ],

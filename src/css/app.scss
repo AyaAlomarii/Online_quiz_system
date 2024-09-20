@@ -9,6 +9,8 @@
 :root {
   --q-color-warning: #fdb5283d;
   --q-color-greyText: #262B43B2;
+  --q-color-bg-grey: #F7F7F9;
+
 
 }
 //font
@@ -16,7 +18,9 @@
   font-size: 11px;
 }
 //margins
-
+.margin-t--50 {
+  margin-top: -50px;
+}
 //paddings
 
 //override
@@ -27,6 +31,10 @@
 
 .bg-warning {
   background-color: var(--q-color-warning);
+}
+.bg-bg-grey {
+  background-color:  var(--q-color-bg-grey);
+
 }
 //text color
 .warning-text {
@@ -43,6 +51,13 @@
 .br-12 {
   border-radius: 12px;
 }
+.br-t-8 {
+  border-radius: 8px 8px 0px 0px;
+}
+
+.br-8 {
+  border-radius: 8px;
+}
 //width
 
 .width-900 {
@@ -56,19 +71,29 @@
   width: 364px;
 }
 
+.width-120{
+  width: 120px;
+
+}
+
+//height
+.h-250 {
+  height: 250px;
+}
+
 .heigh-48px {
   height: 48px;
 }
+.heigh-54px {
+  height: 54px;
+}
 
-//font
+.height-120{
+  height: 120px;
 
-//margins
+}
 
-//paddings
 
-//override
-
-//dimensions
 .background {
   background-image: url(../assets/images/loginBackground.png);
   background-repeat: no-repeat;
