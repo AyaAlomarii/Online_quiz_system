@@ -15,6 +15,13 @@ body {
   --q-color-warning: #fdb5283d;
   --q-color-greyText: #262B43B2;
   --q-color-bg-grey: #F7F7F9;
+  --q-color-start: #8EE753;
+  --q-color-end: #FF716D;
+  --q-color-bg-attempt: #E6E7FF;
+
+  
+
+
 
 
 }
@@ -41,9 +48,19 @@ body {
   background-color:  var(--q-color-bg-grey);
 
 }
+.bg-attempt {
+  background-color:  var(--q-color-bg-attempt);
+
+}
 //text color
 .warning-text {
   color: var(--q-color-warning);
+}
+.start-text {
+  color: var(--q-color-start);
+}
+.end-text {
+  color: var(--q-color-end);
 }
 
 .grey-text {
@@ -54,7 +71,7 @@ body {
   border-radius: 8px;
 }
 .br-12 {
-  border-radius: 12px;
+  border-radius: 12px !important;
 }
 .br-t-8 {
   border-radius: 8px 8px 0px 0px;
@@ -78,13 +95,15 @@ body {
   width: 120px;
 
 }
-.dialog-btn {
-  width: 93px;
-  
-}
+
 
 .width-93{
   width: 93px;
+
+}
+
+.width-408{
+  width: 460px;
 
 }
 
@@ -106,6 +125,10 @@ body {
 
 .height-38{
   height: 38px;
+}
+
+.height-190{
+  height: 230px;
 }
 
 

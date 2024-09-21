@@ -90,8 +90,8 @@
 
   <!--Dialog  -->
 
-  <q-dialog :square="false" v-model="showDialog" class="hide-scrollbar">
-    <q-card class="width-900 q-pa-lg hide-scrollbar">
+  <q-dialog  v-model="showDialog" class="br-12 hide-scrollbar  " >
+    <q-card class="br-12 width-900 q-pa-lg hide-scrollbar">
       <q-card-section class="q-pa-md">
         <q-btn
           flat
