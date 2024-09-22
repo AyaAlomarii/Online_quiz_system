@@ -9,5 +9,11 @@ export default class Routes {
   public static readonly RESULT = '/result';
 
 
+  public static readonly QUESTIONS = '/questions';
+
+
+
+
+
 
 }

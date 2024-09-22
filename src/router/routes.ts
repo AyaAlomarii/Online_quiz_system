@@ -31,7 +31,10 @@ const routes: RouteRecordRaw[] = [
           },
         ]
       },
-
+{
+        path: RoutesPaths.QUESTIONS,
+        component: () => import('src/components/student/QuestionComp.vue'),
+      },
     ],
   },
 
