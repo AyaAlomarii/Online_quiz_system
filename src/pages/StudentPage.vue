@@ -408,6 +408,7 @@ const quizzes = ref<Quiz[]>([
   ]
 },
 ]);
+
  const filtered =computed<Quiz[]>(()=>{
 
  return quizzes.value.filter((element)=>element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()))

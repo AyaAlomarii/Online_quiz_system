@@ -1,7 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import RoutesPaths from './RoutesPaths';
 const routes: RouteRecordRaw[] = [
-
   {
     path: '',
     component: () => import('../layouts/AccessLayout.vue'),
@@ -10,7 +9,6 @@ const routes: RouteRecordRaw[] = [
         path: RoutesPaths.LOGIN,
         component: () => import('../pages/LoginPage.vue'),
       },
-
     ],
   },
 
@@ -21,19 +19,21 @@ const routes: RouteRecordRaw[] = [
       {
         path: RoutesPaths.STUDENT,
         component: () => import('../pages/StudentPage.vue'),
-        children:[
+        children: [
           {
             path: RoutesPaths.QUIZ,
             component: () => import('src/components/student/QuizComp.vue'),
-          }, {
+          },
+          {
             path: RoutesPaths.RESULT,
             component: () => import('src/components/student/ResultComp.vue'),
           },
-        ]
+        ],
       },
-{
+      {
         path: RoutesPaths.QUESTIONS,
-        component: () => import('src/components/student/QuestionComp.vue'),
+        component: () => import('src/pages/QuestionsPage.vue'),
+        props:true
       },
     ],
   },

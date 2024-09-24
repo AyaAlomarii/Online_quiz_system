@@ -8,8 +8,9 @@ export default class Routes {
   public static readonly QUIZ = '/quiz';
   public static readonly RESULT = '/result';
 
+  public static readonly QUESTIONS = '/details';
 
-  public static readonly QUESTIONS = '/questions';
+  public static readonly QUESTIONS_COM = '/question';
 
 
 
