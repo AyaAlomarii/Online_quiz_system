@@ -18,6 +18,11 @@ body {
   --q-color-start: #8ee753;
   --q-color-end: #ff716d;
   --q-color-bg-attempt: #e6e7ff;
+  --q-color-questions-grey: #6D788D;
+  --q-color-error: #FF4D49;
+
+;
+
 }
 //font
 .font-11 {
@@ -44,7 +49,14 @@ body {
 .bg-attempt {
   background-color: var(--q-color-bg-attempt);
 }
+.bg-error {
+  background-color: var(--q-color-error);
+}
+
 //text color
+.error-text {
+  color: var(--q-color-error);
+}
 .warning-text {
   color: var(--q-color-warning);
 }
@@ -57,6 +69,10 @@ body {
 
 .grey-text {
   color: var(--q-color-greyText);
+}
+
+.question-grey-text {
+  color: var(--q-color-questions-grey);
 }
 //border radius
 .br-8 {

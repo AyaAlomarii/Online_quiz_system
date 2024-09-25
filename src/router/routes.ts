@@ -35,6 +35,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/QuestionsPage.vue'),
         props:true
       },
+      {
+        path: RoutesPaths.RESULT_PAGE,
+        component: () => import('src/pages/QuizResult.vue'),
+        
+      },
     ],
   },
 

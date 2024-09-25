@@ -12,6 +12,9 @@ export default class Routes {
 
   public static readonly QUESTIONS_COM = '/question';
 
+  public static readonly RESULT_PAGE= '/quiz/result';
+
+
 
 
 
