@@ -52,7 +52,7 @@ import {PropType} from 'vue'
 import { useRouter } from 'vue-router';
 import Quiz from '../../models/QuizModel';
 import RoutesPaths from 'src/router/RoutesPaths';
-import EventBus from 'src/models/EventBus'
+import EventBus from 'src/EventBus/EventBus'
 const router=useRouter()
 defineProps({
   quiz: {

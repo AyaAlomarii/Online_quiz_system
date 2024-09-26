@@ -12,7 +12,8 @@ import QuestionComp from 'components/student/QuestionComp.vue';
 import { onMounted, ref,onBeforeUnmount} from 'vue';
 import { useRoute } from 'vue-router';
 import Quiz from 'src/models/QuizModel';
-// import eventBus from 'src/models/EventBus'
+// import eventBus from 'src/EventBus/EventBus'
+
 const route = useRoute();
 const quiz = ref<Quiz>();
 

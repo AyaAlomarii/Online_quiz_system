@@ -3,13 +3,13 @@
     <!-- Header -->
     <q-card class="height-365 q-ma-md br-8">
       <q-card-section class="no-padding">
-        <q-img src="public/student/header.svg" class="br-t-8 h-250" />
+        <q-img src="/student/header.svg" class="br-t-8 h-250" />
       </q-card-section>
 
       <q-card-section class="row">
         <q-avatar class="col-auto q-pa-xs margin-t--50" size="128px" square>
           <q-img
-            src="public/student/avatar.svg"
+            src="/student/avatar.svg"
             class="width-120 height-120"
           />
         </q-avatar>
