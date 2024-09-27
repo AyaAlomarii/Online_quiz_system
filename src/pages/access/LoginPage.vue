@@ -70,6 +70,7 @@
               color="primary"
               class="full-width q-mt-md br-8"
               type="submit"
+              :to="Routes.QUIZ"
             />
           </div>
         </q-card-section>
@@ -182,7 +183,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import UserModel from '../models/UserModel';
+import UserModel from '../../models/UserModel';
+import Routes from 'src/router/RoutesPaths.ts'
 const email = ref<string>();
 const password = ref<string>();
 const rememberMe = ref<boolean>(false);

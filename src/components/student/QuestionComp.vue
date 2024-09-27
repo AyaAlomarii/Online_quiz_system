@@ -144,7 +144,7 @@ const props = defineProps({
 //functions
 const handelScore = () => {
   //for loop
-  props.quiz?.questions.forEach((ele) => {
+  props.quiz?.questions?.forEach((ele) => {
     if (ele.correctAnswer === allAnswers.value[ele.question]) {
       console.log(ele.correctAnswer, allAnswers.value[ele.question], 'right');
 
@@ -176,7 +176,7 @@ const handelSubmit = () => {
   //calculate score
   handelScore();
   //event bus variables
-  eventBus.quizTitle = props.quiz.title;
+  eventBus.quiz = props.quiz;
   eventBus.questions = props.quiz.questions;
   eventBus.score = score.value;
   eventBus.answersObj = allAnswers.value;

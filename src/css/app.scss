@@ -20,6 +20,8 @@ body {
   --q-color-bg-attempt: #e6e7ff;
   --q-color-questions-grey: #6D788D;
   --q-color-error: #FF4D49;
+  --q-color-correct: #0FA958;
+
 
 ;
 
@@ -83,6 +85,15 @@ body {
 }
 .br-t-8 {
   border-radius: 8px 8px 0px 0px;
+}
+
+//border color
+.br-error{
+  border-color: var(--q-color-error);
+}
+
+.br-correct{
+  border-color: var(--q-color-correct);
 }
 
 //width
@@ -168,4 +179,11 @@ body {
   .card-grid {
     grid-template-columns: repeat(1, 1fr) !important;
   }
+}
+.correct-answer {
+  color: green; /* Green for correct answers */
+}
+
+.incorrect-answer {
+  color: red; /* Red for incorrect answers */
 }

@@ -4,7 +4,7 @@ import DataObject from '@/models/DataObject';
 import { reactive } from 'vue';
 
 const eventBus = reactive<DataObject>({
-  quizTitle:'',
+  quiz:{},
   questions: [],
   score: null,
   answersObj: {},

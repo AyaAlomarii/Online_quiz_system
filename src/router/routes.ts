@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: RoutesPaths.LOGIN,
-        component: () => import('../pages/LoginPage.vue'),
+        component: () => import('../pages/access/LoginPage.vue'),
       },
     ],
   },
@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: RoutesPaths.STUDENT,
-        component: () => import('../pages/StudentPage.vue'),
+        component: () => import('../pages/student/StudentPage.vue'),
         children: [
           {
             path: RoutesPaths.QUIZ,
@@ -32,12 +32,12 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: RoutesPaths.QUESTIONS,
-        component: () => import('src/pages/QuestionsPage.vue'),
+        component: () => import('pages/student/QuestionsPage.vue'),
         props:true
       },
       {
         path: RoutesPaths.RESULT_PAGE,
-        component: () => import('src/pages/QuizResult.vue'),
+        component: () => import('pages/student/QuizResult.vue'),
         
       },
     ],
