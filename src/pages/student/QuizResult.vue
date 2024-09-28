@@ -1,5 +1,5 @@
 <template>
-  <div class="justify-center q-ma-md q-px-none">
+  <div v-if="resultVariables.score" class="justify-center q-ma-md q-px-none">
     <q-card flat bordered class="br-8 q-pa-none">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
@@ -111,7 +111,6 @@ const answerTextColor = (
   correctAnswer: string | number,
   ans: string | number
 ) => {
-  console.log(qes);
 
   if (
     resultVariables.value?.answersObj[qes.question] === ans &&

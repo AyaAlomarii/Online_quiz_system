@@ -10,7 +10,7 @@
       active-bg-color="primary"
       no-caps
       dense
-      
+
     >
 
     <q-route-tab
@@ -24,16 +24,16 @@
       style="font-family: Inter;"
 
       />
-  
+
   </q-tabs>
   </div>
-  
+
 <div class="row justify-between">
   <div class="row items-center">
     <q-icon name="search" color="accent" size="sm" class="q-mr-md " />
     <q-input  v-model="search" borderless label="Search" dense/>
   </div>
-  <q-btn color="primary" outline class="q-px-md"  label="Filter by date" no-caps dense icon="filter_alt"/>
+  <q-btn color="primary" outline class="q-px-md"  label="Filter by date" no-caps dense size="md" icon="filter_alt" />
 
 </div>
 
@@ -44,13 +44,13 @@
       transition-prev="2"
       class="bg-transparent"
     >
-  
+
     <q-tab-panel name="quiz" class="q-pa-none ">
 <div class="row ">
   <quiz-comp  v-for="(quiz,i) in filtered" :key="i" :quiz="quiz"  />
 
 </div>
-        
+
       </q-tab-panel>
       <q-tab-panel name="result" class="q-pa-none">
         <div class="row ">
@@ -414,10 +414,14 @@ const quizzes = ref<Quiz[]>([
  return quizzes.value.filter((element)=>element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()))
  })
 
-/*  const sortedByDate =computed<Quiz[]>(()=>{
-   quizzes.value.sort((a, b) => new Date(a.date) - new Date(b.date))
+/*  const sortedByDate = computed<Quiz[]>(() => {
+  return quizzes.value.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+});
 
-})
- */
+const filterByDateBtn=()=>{
+  quizzes.value=sortedByDate.value
+  console.log(sortedByDate.value);
+
+} */
 
 </script>

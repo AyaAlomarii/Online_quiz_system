@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-py-md q-pr-md">
+  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-md ">
     <q-card class="q-pa-sm height-190 bg-white text-black">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
