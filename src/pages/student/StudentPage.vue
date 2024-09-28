@@ -33,7 +33,7 @@
     <q-icon name="search" color="accent" size="sm" class="q-mr-md " />
     <q-input  v-model="search" borderless label="Search" dense/>
   </div>
-  <q-btn color="primary" outline class="q-px-md"  label="Filter by date" no-caps dense size="md" icon="filter_alt" />
+  <q-btn color="primary" outline class="br-8 q-px-md"  label="Filter by date" no-caps dense size="md" icon="filter_alt" />
 
 </div>
 

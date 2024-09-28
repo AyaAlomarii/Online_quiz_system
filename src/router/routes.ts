@@ -56,7 +56,7 @@ const routes: RouteRecordRaw[] = [
           {
             path: RoutesPaths.TEACHER_Result,
             component: () =>
-              import('src/components/teacher/ResultCompTeach.vue'),
+              import('src/components/teacher/ResultCompTeach.vue')
           },
         ],
       },
