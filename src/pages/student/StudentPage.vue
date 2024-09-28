@@ -1,7 +1,7 @@
 <template>
   <q-page>
-<div class="q-px-md">
-  <div class="row q-py-md">
+<div class="">
+  <div class="row q-pa-md">
 
     <q-tabs
       v-model="tab"
@@ -28,7 +28,7 @@
   </q-tabs>
   </div>
 
-<div class="row justify-between">
+<div class="row justify-between q-px-md">
   <div class="row items-center">
     <q-icon name="search" color="accent" size="sm" class="q-mr-md " />
     <q-input  v-model="search" borderless label="Search" dense/>

@@ -34,18 +34,18 @@
 
 
 
+
+    <q-page-container>
+      <router-view />
+
+    </q-page-container>
+    <!-- footer -->
+
     <q-footer borderless class=" row justify-center bg-bg-grey heigh-54px fixed-bottom ">
      <div class="absolute-center text-secondary text-body2 text-center">
       © 2024, Made with by <span class="text-primary">Digital Pages`-</span>
      </div>
       </q-footer>
-
-    <q-page-container>
-      <router-view />
-      
-    </q-page-container>
-    <!-- footer -->
- 
   </q-layout>
 </template>
 

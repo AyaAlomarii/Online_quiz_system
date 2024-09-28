@@ -5,14 +5,23 @@ export default class Routes {
   //!Student
   public static readonly STUDENT = '/student';
 
-  public static readonly QUIZ = '/quiz';
-  public static readonly RESULT = '/result';
+  public static readonly QUIZ = '/student/quiz';
+  public static readonly RESULT = '/student/result';
 
   public static readonly QUESTIONS = '/details';
 
   public static readonly QUESTIONS_COM = '/question';
 
   public static readonly RESULT_PAGE= '/quiz/result';
+
+
+  //!Teacher
+
+  public static readonly TEACHER= '/teacher';
+
+  public static readonly TEACHER_QUIZ= '/teacher/quiz';
+  public static readonly TEACHER_Result= '/teacher/result';
+
 
 
 

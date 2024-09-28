@@ -33,12 +33,32 @@ const routes: RouteRecordRaw[] = [
       {
         path: RoutesPaths.QUESTIONS,
         component: () => import('pages/student/QuestionsPage.vue'),
-        props:true
+        props: true,
       },
       {
         path: RoutesPaths.RESULT_PAGE,
         component: () => import('pages/student/QuizResult.vue'),
-        
+      },
+    ],
+  },
+  {
+    path: '',
+    component: () => import('src/layouts/TeacherLayout.vue'),
+    children: [
+      {
+        path: RoutesPaths.TEACHER,
+        component: () => import('src/pages/teacher/TeacherPage.vue'),
+        children: [
+          {
+            path: RoutesPaths.TEACHER_QUIZ,
+            component: () => import('src/components/teacher/QuizCompTeach.vue'),
+          },
+          {
+            path: RoutesPaths.TEACHER_Result,
+            component: () =>
+              import('src/components/teacher/ResultCompTeach.vue'),
+          },
+        ],
       },
     ],
   },
