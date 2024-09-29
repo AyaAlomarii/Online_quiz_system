@@ -54,7 +54,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('src/components/teacher/QuizCompTeach.vue'),
           },
           {
-            path: RoutesPaths.TEACHER_Result,
+            path: RoutesPaths.TEACHER_RESULT,
             component: () =>
               import('src/components/teacher/ResultCompTeach.vue')
           },

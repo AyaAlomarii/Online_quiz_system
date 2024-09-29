@@ -20,7 +20,7 @@ export default class Routes {
   public static readonly TEACHER= '/teacher';
 
   public static readonly TEACHER_QUIZ= '/teacher/quiz';
-  public static readonly TEACHER_Result= '/teacher/result';
+  public static readonly TEACHER_RESULT= '/teacher/result';
 
 
 

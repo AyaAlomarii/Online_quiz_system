@@ -85,7 +85,8 @@
     </q-card>
 
     <div class="row justify-end q-my-sm">
-      <q-btn no-caps dense color="error" label="Close"  class="q-px-md" :to="Routes.QUIZ" />
+      <q-btn no-caps dense label="Close"  class="q-px-md" :to="Routes.QUIZ"  text-color="red"
+      color='red-2'/>
 
     </div>
   </div>

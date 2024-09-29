@@ -1,7 +1,7 @@
 <template>
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm ">
-    <q-card class="q-pa-sm height-190 bg-white text-black">
-      <q-card-section class="br-8 row justify-between">
+  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm q-mt-sm q-pa-md ">
+    <q-card class="br-8 q-pa-sm q-pb-lg bg-white text-black">
+      <q-card-section class="row justify-between">
         <div class="row">
           <q-icon
             name="description"
@@ -32,8 +32,8 @@
 
 
             <q-btn
-              class="bg-attempt text-primary"
-              outline
+              class="br-8 bg-attempt text-primary"
+              
               size="md"
               no-caps
               :disable="quiz.status === 'active' ? true : false"

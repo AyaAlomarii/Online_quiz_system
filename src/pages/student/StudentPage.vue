@@ -21,7 +21,6 @@
         :to="ele.to"
       class="br-8 q-py-xs"
       :icon="ele.icon"
-      style="font-family: Inter;"
 
       />
 
