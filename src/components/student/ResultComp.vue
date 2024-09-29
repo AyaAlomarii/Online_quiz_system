@@ -7,7 +7,7 @@
             name="description"
             size="sm"
             class="q-pt-md q-mr-md"
-            color="black"
+            color="red"
           />
           <div class="column text-h6">
             <span>
