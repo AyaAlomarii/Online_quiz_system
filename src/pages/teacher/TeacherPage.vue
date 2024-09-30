@@ -75,8 +75,8 @@
         </q-tab-panel>
       </q-tab-panels>
       <!-- Dialog -->
-      <q-dialog v-model="showCreateDialog" class="row">
-        <q-card class="br-12 q-pa-lg width-900">
+      <q-dialog v-model="showCreateDialog" class="row ">
+        <q-card class="br-12 q-pa-lg width-900 hide-scrollbar">
           <q-card-section class="col-12 q-pa-md">
             <q-btn
               flat
@@ -245,7 +245,8 @@
                   unelevated
                   no-caps
                   size="md"
-                  class="br-8 bg-primary text-white q-mr-md q-px-md"
+                  class="br-8 q-mr-md q-px-md"
+                  color="light-green-11"   text-color="light-green-14"
                 />
                 <q-btn
                   label="Cancel"
