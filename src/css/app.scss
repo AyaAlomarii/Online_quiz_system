@@ -98,9 +98,7 @@ body {
 
 //width
 
-.width-900 {
-  min-width: 900px;
-}
+
 .width-460 {
   width: 460px;
 }
@@ -167,19 +165,23 @@ body {
 }
 //media query
 /* Styles for larger screens */
-
-
-@media screen and (max-width: 1050px) {
-  .card-grid {
-    grid-template-columns: repeat(2,1fr) !important; /* Adjust according to your design */
+.width-900 {
+  width: 100%;
+}
+/* Styles for larger screens */
+@media screen and (min-width: 601px) {
+  .width-900 {
+    min-width: 900px !important; /* Adjust according to your design */
+  }
+}
+@media screen and (max-width: 600px) {
+  .width-900 {
+    width: 90% !important; /* Or another percentage that fits your design */
+    max-width: 500px !important; /* Optional, if you still want to limit the width */
   }
 }
 
-@media screen and (max-width: 703px) {
-  .card-grid {
-    grid-template-columns: repeat(1, 1fr) !important;
-  }
-}
+
 .correct-answer {
   color: green; /* Green for correct answers */
 }

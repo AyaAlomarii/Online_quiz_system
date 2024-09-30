@@ -33,13 +33,16 @@
       </q-card-section>
 
       <q-card-section class="">
-
         <q-card
           v-for="(qes, i) in resultVariables?.questions"
           :key="i"
           flat
           bordered
-          :class=" resultVariables?.answersObj[qes.question] === qes.correctAnswer?'q-ma-md br-correct':'q-ma-md br-error'"
+          :class="
+            resultVariables?.answersObj[qes.question] === qes.correctAnswer
+              ? 'q-ma-md br-correct'
+              : 'q-ma-md br-error'
+          "
         >
           <q-card-section class="q-pb-none">
             <div class="row justify-between items-center">
@@ -75,7 +78,11 @@
                   keep-color
                   disable
                   dense
-                  :class="answerTextColor(qes, qes.correctAnswer, ans)"
+                  :class="{
+                    'text-green': ans === qes.correctAnswer,
+
+                    'text-red': resultVariables.answersObj[qes.question] === ans && ans!==qes.correctAnswer,
+                  }"
                 />
               </div>
             </div>
@@ -85,19 +92,24 @@
     </q-card>
 
     <div class="row justify-end q-my-sm">
-      <q-btn no-caps dense label="Close"  class="q-px-md" :to="Routes.QUIZ"  text-color="red"
-      color='red-2'/>
-
+      <q-btn
+        no-caps
+        dense
+        label="Close"
+        class="q-px-md"
+        :to="Routes.QUIZ"
+        text-color="red"
+        color="red-2"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 //! remember that i used qes.question not the index
-import DataObject from 'src/models/DataObject';
 import eventBus from 'src/EventBus/EventBus';
 import { computed } from 'vue';
-import Routes from 'src/router/RoutesPaths'
+import Routes from 'src/router/RoutesPaths';
 //variables
 const resultVariables = computed(() => {
   return {
@@ -107,29 +119,5 @@ const resultVariables = computed(() => {
     answersObj: eventBus.answersObj,
   };
 });
-const answerTextColor = (
-  qes: DataObject,
-  correctAnswer: string | number,
-  ans: string | number
-) => {
 
-  if (
-    resultVariables.value?.answersObj[qes.question] === ans &&
-    resultVariables.value?.answersObj[qes.question] !== correctAnswer
-  ) {
-    return 'text-red ';
-  }
-   if (resultVariables.value?.answersObj[qes.question] === ans &&
-    resultVariables.value?.answersObj[qes.question] === correctAnswer
-  ) {
-    return 'text-green';
-  }
-
-  if (
-   correctAnswer === ans
-  ) {
-    return 'text-green';
-  }
-  return ''
-};
 </script>

@@ -445,5 +445,26 @@ const filterByDateBtn=()=>{
   quizzes.value=sortedByDate.value
   console.log(sortedByDate.value);
 
-} */
+} 
+ 
+ 
+ !
+ const filtered = computed<Quiz[]>(() => {
+  const arr = quizzes.value.filter((element: Quiz) =>
+    element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+  );
+  // if (sort) {
+    // arr.sort?
+  // }
+  return arr;
+});
+
+const sortedByDate = computed<Quiz[]>(() => {
+  return (quizzes.value || []).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+});
+
+ 
+ */
 </script>

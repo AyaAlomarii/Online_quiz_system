@@ -57,12 +57,15 @@
 </template>
 
 <script setup lang="ts">
-import {PropType} from 'vue'
+import {PropType,} from 'vue'
 // import { useRouter } from 'vue-router';
 import Quiz from '../../models/QuizModel';
 // import RoutesPaths from 'src/router/RoutesPaths';
 // import EventBus from 'src/EventBus/EventBus'
 // const router=useRouter()
+// const filteredByDate=ref<boolean>(false)
+// const emit= defineEmits<{(event:'filterData', data:boolean):void}>()
+
 defineProps({
   quiz: {
     type: Object as PropType<Quiz>,

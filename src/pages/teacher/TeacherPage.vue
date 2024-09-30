@@ -43,6 +43,7 @@
             class="br-8 q-px-md text-body2 q-py-none"
             label="Create new Quiz"
             no-caps
+            @click="showCreateDialog = true"
             dense
             size="md"
             icon="edit_square"
@@ -73,6 +74,196 @@
           </div>
         </q-tab-panel>
       </q-tab-panels>
+      <!-- Dialog -->
+      <q-dialog v-model="showCreateDialog" class="row">
+        <q-card class="br-12 q-pa-lg width-900">
+          <q-card-section class="col-12 q-pa-md">
+            <q-btn
+              flat
+              v-close-popup
+              round
+              dense
+              icon="close "
+              class="float-right"
+              @click="resetOnCancel"
+            />
+          </q-card-section>
+
+          <q-card-section class="q-pa-sm text-center">
+            <div class="text-h5 text-center text-weight-medium">
+              Add New Quiz
+            </div>
+          </q-card-section>
+
+          <q-card-section class="row justify-center">
+            <q-form
+              @submit.prevent="handelSubmitNewQuiz"
+              @reset="resetOnCancel"
+              class="q-gutter-md col-12"
+            >
+              <div class="">
+                <q-input
+                  v-model="date"
+                  dense
+                  label="Date"
+                  class="q-px-sm br-8 bg-white"
+                  outlined
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
+                          <div class="row items-center justify-end">
+                            <q-btn
+                              v-close-popup
+                              label="Close"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-time
+                          v-model="date"
+                          mask="YYYY-MM-DD HH:mm"
+                          format24h
+                        >
+                          <div class="row items-center justify-end">
+                            <q-btn
+                              v-close-popup
+                              label="Close"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+                        </q-time>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+
+              <q-input
+                v-model="quizName"
+                dense
+                label="Quiz Name"
+                type="text"
+                class="q-px-sm br-8 bg-white"
+                outlined
+              >
+              </q-input>
+              <q-input
+                v-model="quizDescription"
+                dense
+                label="Quiz Description"
+                type="textarea"
+                class="q-px-sm br-8 bg-white"
+                outlined
+              />
+              <div v-for="(qes, i) in newQuestion" :key="i" class="row q-py-md">
+                <q-input
+                  v-model="qes.question"
+                  dense
+                  label="Question"
+                  type="text"
+                  class="q-px-sm br-8 col-12 bg-white"
+                  outlined
+                />
+                <q-toggle
+                  v-model="qes.multipleChoice"
+                  label="Student can select more than one choice ?"
+                  color="primary"
+                  class="q-px-sm q-py-md col-12 justify-end"
+                  dense
+                />
+
+                <div class="row">
+                  <div
+                    class="q-pa-sm col-6 q-gutter-col-md"
+                    v-for="(option, index) in qes.options"
+                    :key="index"
+                  >
+                    <q-input
+                      v-model="option.text"
+                      dense
+                      :label="`option ${index + 1}`"
+                      type="text"
+                      class="br-8 bg-white"
+                      outlined
+                    >
+                      <template v-slot:append>
+                        <q-checkbox v-model="option.correct" />
+                      </template>
+                    </q-input>
+                  </div>
+                </div>
+                <span class="q-px-sm row text-grey col-12 justify-end"
+                  >tick the box of right answer</span
+                >
+                <div class=" q-px-sm row col-12 justify-between q-py-md">
+                  <q-btn
+                    label="Add Question"
+                    dense
+                    unelevated
+                    no-caps
+                    class="br-8 q-px-md bg-attempt text-primary"
+                    @click="addNewQuestion"
+                    icon-right="add_box"
+                  />
+                  <q-btn
+                    label="Remove"
+                    dense
+                    no-caps
+                    unelevated
+                    class="br-8 q-px-md bg-attempt text-primary"
+                    @click="removeQuestion(i)"
+                    icon-right="disabled_by_default
+"
+                  />
+                </div>
+              </div>
+
+              <div class="q-px-sm q-py-md" align="right">
+                <q-btn
+                  type="submit"
+                  label="Save"
+                  dense
+                  unelevated
+                  no-caps
+                  size="md"
+                  class="br-8 bg-primary text-white q-mr-md q-px-md"
+                />
+                <q-btn
+                  label="Cancel"
+                  v-close-popup
+                  type="reset"
+                  size="md"
+                  unelevated
+                  dense
+                  no-caps
+                  class="br-8 q-px-md br-8"
+                  text-color="red"
+                  outlined
+                />
+              </div>
+            </q-form>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </div>
   </q-page>
 </template>
@@ -82,9 +273,18 @@ import { ref, computed } from 'vue';
 import QuizComp from 'src/components/teacher/QuizCompTeach.vue';
 import ResultComp from 'src/components/teacher/ResultCompTeach.vue';
 import { Quiz } from '@/models/QuizModel';
+import DataObject from '@/models/DataObject';
 
 //variables
 const search = ref<string>('');
+const showCreateDialog = ref<boolean>(false);
+const date = ref<string>('');
+const quizName = ref<string>('');
+const quizDescription = ref<string>('');
+const newQuiz = ref<DataObject>({});
+
+// const question = ref<string>('');
+// const options = ref<string[]>('');
 
 const tab = ref<string>('quiz');
 
@@ -103,11 +303,119 @@ const tabsHeader = ref([
   },
 ]);
 
+const newQuestion = ref([
+  {
+    question: '',
+    multipleChoice: false,
+    options: [
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
+    ],
+  },
+]);
+
+const addNewQuestion = () => {
+  newQuestion.value.push({
+    question: '',
+    multipleChoice: false,
+    options: [
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
+    ],
+  });
+};
+
+const removeQuestion = (index) => {
+  if (index !== 0) {
+    newQuestion.value.splice(index, 1);
+  }
+};
+
 const filtered = computed<Quiz[]>(() => {
   return quizzes.value.filter((element) =>
     element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
   );
 });
+
+const handelSubmitNewQuiz = () => {
+  newQuiz.value = {
+    title: quizName,
+    date: date,
+    description: quizDescription,
+    questions: newQuestion,
+  };
+
+  console.log(newQuiz.value);
+
+  newQuiz.value = {};
+  quizName.value = '';
+  date.value = '';
+  quizDescription.value = '';
+  newQuestion.value = [
+    {
+      question: '',
+      multipleChoice: false,
+      options: [
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+      ],
+    },
+  ];
+};
+const resetOnCancel =()=>{
+  newQuiz.value = {};
+  quizName.value = '';
+  date.value = '';
+  quizDescription.value = '';
+  newQuestion.value = [
+    {
+      question: '',
+      multipleChoice: false,
+      options: [
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+      ],
+    },
+  ];
+}
+/*  const sortedByDate = computed<Quiz[]>(() => {
+  return quizzes.value.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+});
+
+const filterByDateBtn=()=>{
+  quizzes.value=sortedByDate.value
+  console.log(sortedByDate.value);
+
+} 
+ 
+ 
+ !
+ const filtered = computed<Quiz[]>(() => {
+  const arr = quizzes.value.filter((element: Quiz) =>
+    element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+  );
+  // if (sort) {
+    // arr.sort?
+  // }
+  return arr;
+});
+
+const sortedByDate = computed<Quiz[]>(() => {
+  return (quizzes.value || []).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+});
+
+ 
+ */
 //card data
 const quizzes = ref<Quiz[]>([
   {
