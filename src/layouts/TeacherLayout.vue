@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="bg-bg-grey">
+  <q-layout  class="bg-bg-grey">
     <!-- Header -->
     <q-card class="height-365 q-ma-md br-8">
       <q-card-section class="no-padding">

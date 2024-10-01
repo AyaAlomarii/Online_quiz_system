@@ -11,7 +11,7 @@
           />
           <div class="column text-h6">
             <span>
-              {{ resultVariables?.quiz.title }}
+              {{ resultVariables?.quiz.name }}
             </span>
 
             <span class="text-body2 text-grey">
@@ -81,7 +81,9 @@
                   :class="{
                     'text-green': ans === qes.correctAnswer,
 
-                    'text-red': resultVariables.answersObj[qes.question] === ans && ans!==qes.correctAnswer,
+                    'text-red':
+                      resultVariables.answersObj[qes.question] === ans &&
+                      ans !== qes.correctAnswer,
                   }"
                 />
               </div>
@@ -119,5 +121,4 @@ const resultVariables = computed(() => {
     answersObj: eventBus.answersObj,
   };
 });
-
 </script>

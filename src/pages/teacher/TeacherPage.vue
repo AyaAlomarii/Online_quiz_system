@@ -75,7 +75,7 @@
         </q-tab-panel>
       </q-tab-panels>
       <!-- Dialog -->
-      <q-dialog v-model="showCreateDialog" class="row ">
+      <q-dialog v-model="showCreateDialog" class="row">
         <q-card class="br-12 q-pa-lg width-900 hide-scrollbar">
           <q-card-section class="col-12 q-pa-md">
             <q-btn
@@ -175,16 +175,25 @@
                 outlined
               />
               <div v-for="(qes, i) in newQuestion" :key="i" class="row q-py-md">
-                <q-input
+              <q-input
                   v-model="qes.question"
                   dense
                   label="Question"
                   type="text"
-                  class="q-px-sm br-8 col-12 bg-white"
+                  class="q-px-sm br-8 col-8 bg-white"
                   outlined
                 />
+                <q-input
+                  v-model="qes.point"
+                  dense
+                  label="Points"
+                  type="number"
+                  class="q-px-sm br-8 col-4 bg-white"
+                  outlined
+                />
+             
                 <q-toggle
-                  v-model="qes.multipleChoice"
+                  v-model="qes.multipleChoices"
                   label="Student can select more than one choice ?"
                   color="primary"
                   class="q-px-sm q-py-md col-12 justify-end"
@@ -214,7 +223,7 @@
                 <span class="q-px-sm row text-grey col-12 justify-end"
                   >tick the box of right answer</span
                 >
-                <div class=" q-px-sm row col-12 justify-between q-py-md">
+                <div class="q-px-sm row col-12 justify-between q-py-md">
                   <q-btn
                     label="Add Question"
                     dense
@@ -246,7 +255,8 @@
                   no-caps
                   size="md"
                   class="br-8 q-mr-md q-px-md"
-                  color="light-green-11"   text-color="light-green-14"
+                  color="light-green-11"
+                  text-color="light-green-14"
                 />
                 <q-btn
                   label="Cancel"
@@ -270,11 +280,14 @@
 </template>
 <script setup lang="ts">
 import RoutesPaths from 'src/router/RoutesPaths';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import QuizComp from 'src/components/teacher/QuizCompTeach.vue';
 import ResultComp from 'src/components/teacher/ResultCompTeach.vue';
-import { Quiz } from '@/models/QuizModel';
+import { Question, Quiz } from '@/models/QuizModel';
+import CreateNewQuiz from 'src/functions/createQuizFun';
 import DataObject from '@/models/DataObject';
+import { LocalStorage } from 'quasar';
+import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
 
 //variables
 const search = ref<string>('');
@@ -282,7 +295,13 @@ const showCreateDialog = ref<boolean>(false);
 const date = ref<string>('');
 const quizName = ref<string>('');
 const quizDescription = ref<string>('');
-const newQuiz = ref<DataObject>({});
+// const newQuiz = ref<Quiz>();
+const quizzesLocal = ref<Quiz>();
+const totalPoints = ref<number>(0);
+const updateQuiz = ref<Quiz[]>([]);
+const quizzes = ref<Quiz[]>([]);
+
+  
 
 // const question = ref<string>('');
 // const options = ref<string[]>('');
@@ -304,10 +323,23 @@ const tabsHeader = ref([
   },
 ]);
 
-const newQuestion = ref([
+
+
+
+onMounted(async()=>{
+  const quizzesTwo = new GetAllQuizzes
+  // quizzesTwo.executeAsync()
+   quizzes.value=await quizzesTwo.executeAsync() as Quiz[]
+  
+})
+
+
+
+const newQuestion = ref<Question[]>([
   {
     question: '',
-    multipleChoice: false,
+    multipleChoices: false,
+    point: 0,
     options: [
       { text: '', correct: false },
       { text: '', correct: false },
@@ -317,10 +349,13 @@ const newQuestion = ref([
   },
 ]);
 
+
+
 const addNewQuestion = () => {
   newQuestion.value.push({
     question: '',
-    multipleChoice: false,
+    multipleChoices: false,
+    point: 0,
     options: [
       { text: '', correct: false },
       { text: '', correct: false },
@@ -338,28 +373,54 @@ const removeQuestion = (index) => {
 
 const filtered = computed<Quiz[]>(() => {
   return quizzes.value.filter((element) =>
-    element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
   );
 });
 
+const sumAllPoints = () => {
+  totalPoints.value = 0; // Initialize totalPoints to 0
+  newQuestion.value.forEach((ele) => {
+    totalPoints.value += Number(ele.point); // Convert ele.point to a number before adding
+    console.log(typeof(ele.point), ele.point);
+  });
+  console.log(typeof(totalPoints.value), totalPoints.value);
+};
+
 const handelSubmitNewQuiz = () => {
-  newQuiz.value = {
-    title: quizName,
-    date: date,
-    description: quizDescription,
-    questions: newQuestion,
-  };
+  sumAllPoints();
+  
+  quizzesLocal.value={
+    id: 0,
+    date: date.value,
+    description: quizDescription.value,
+    name: quizName.value,
+    teacher: '',
+    points: totalPoints.value,
+    students: 0,
+    start: '',
+    end: '',
+    status: '',
+    totalQuestion: newQuestion.value.length ,
+    questions: newQuestion.value,
+  }
+  // const existingQuizzes = (LocalStorage.getItem('quizzes') || []) as []
+  
+      // updateQuiz.value=[...existingQuizzes,quizzesLocal.value]
+    // existingQuizzes.push(quizzesLocal.value)
+  const createNewQuiz = new CreateNewQuiz();
+quizzes.value.push(quizzesLocal.value)
+  createNewQuiz.executeAsync({ quizzes: quizzes.value } as DataObject);
 
-  console.log(newQuiz.value);
-
-  newQuiz.value = {};
+  // newQuiz.value = [];
   quizName.value = '';
   date.value = '';
   quizDescription.value = '';
+  totalPoints.value=0
   newQuestion.value = [
     {
       question: '',
-      multipleChoice: false,
+      multipleChoices: false,
+      point: 0,
       options: [
         { text: '', correct: false },
         { text: '', correct: false },
@@ -369,15 +430,20 @@ const handelSubmitNewQuiz = () => {
     },
   ];
 };
-const resetOnCancel =()=>{
-  newQuiz.value = {};
+
+
+
+
+const resetOnCancel = () => {
+  // newQuiz.value = [];
   quizName.value = '';
   date.value = '';
   quizDescription.value = '';
   newQuestion.value = [
     {
       question: '',
-      multipleChoice: false,
+      multipleChoices: false,
+      point: 0,
       options: [
         { text: '', correct: false },
         { text: '', correct: false },
@@ -386,7 +452,10 @@ const resetOnCancel =()=>{
       ],
     },
   ];
-}
+};
+
+
+
 /*  const sortedByDate = computed<Quiz[]>(() => {
   return quizzes.value.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 });
@@ -395,13 +464,13 @@ const filterByDateBtn=()=>{
   quizzes.value=sortedByDate.value
   console.log(sortedByDate.value);
 
-} 
- 
- 
+}
+
+
  !
  const filtered = computed<Quiz[]>(() => {
   const arr = quizzes.value.filter((element: Quiz) =>
-    element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
   );
   // if (sort) {
     // arr.sort?
@@ -415,350 +484,300 @@ const sortedByDate = computed<Quiz[]>(() => {
   );
 });
 
- 
+
  */
 //card data
-const quizzes = ref<Quiz[]>([
+/* const quizzes = ref<Quiz[]>([
   {
     id: 1,
-    title: 'Arabic Quiz',
-    start: '08:00 am',
-    end: '09:00 am',
     date: '09/09/2024',
+    description: 'This quiz covers Arabic language basics.',
+    name: 'Arabic Quiz',
     teacher: 'Teacher A',
     points: 50,
     students: 30,
+    start: '08:00 am',
+    end: '09:00 am',
     status: 'active',
+    totalQuestion: 3,
     questions: [
       {
-        id: 1,
-        question: 1,
-        text: 'What is the meaning of the word "Shorouq"?',
-        options: ['Morning', 'Evening', 'Noon', 'Night'],
-        correctAnswer: 'Morning',
-      },
-      {
-        id: 2,
-        question: 2,
-        text: 'What is the plural of the word "Pen"?',
-        options: ['Pens', 'My pens', 'Two pens', 'Pen knife'],
-        correctAnswer: 'Pens',
-      },
-      {
-        id: 3,
-        question: 3,
-        text: 'Complete the sentence: "Knowledge is light and ..."',
+        question: 'What is the meaning of the word "Shorouq"?',
+        multipleChoices: false,
+        point: 10,
         options: [
-          'Ignorance is darkness',
-          'Wisdom is key',
-          'Power is a weapon',
-          'Thought is guide',
+          { text: 'Morning', correct: true },
+          { text: 'Evening', correct: false },
+          { text: 'Noon', correct: false },
+          { text: 'Night', correct: false },
         ],
-        correctAnswer: 'Ignorance is darkness',
+      },
+      {
+        question: 'What is the plural of the word "Pen"?',
+        multipleChoices: false,
+        point: 15,
+        options: [
+          { text: 'Pens', correct: true },
+          { text: 'My pens', correct: false },
+          { text: 'Two pens', correct: false },
+          { text: 'Pen knife', correct: false },
+        ],
+      },
+      {
+        question: 'Complete the sentence: "Knowledge is light and ..."',
+        multipleChoices: false,
+        point: 25,
+        options: [
+          { text: 'Ignorance is darkness', correct: true },
+          { text: 'Wisdom is key', correct: false },
+          { text: 'Power is a weapon', correct: false },
+          { text: 'Thought is guide', correct: false },
+        ],
       },
     ],
   },
-
   {
     id: 2,
-    title: 'Math Quiz',
-    start: '10:00 am',
-    end: '11:00 am',
     date: '10/09/2024',
+    description: 'This quiz tests basic math operations.',
+    name: 'Math Quiz',
     teacher: 'Teacher B',
     points: 40,
     students: 25,
+    start: '10:00 am',
+    end: '11:00 am',
     status: 'inactive',
+    totalQuestion: 3,
     questions: [
       {
-        id: 1,
-        question: 1,
-        text: 'What is the result of 5 × 6?',
-        options: ['30', '25', '35', '40'],
-        correctAnswer: '30',
+        question: 'What is the result of 5 × 6?',
+        multipleChoices: false,
+        point: 10,
+        options: [
+          { text: '30', correct: true },
+          { text: '25', correct: false },
+          { text: '35', correct: false },
+          { text: '40', correct: false },
+        ],
       },
       {
-        id: 2,
-        question: 2,
-        text: 'What is the result of 10 ÷ 2?',
-        options: ['5', '4', '6', '8'],
-        correctAnswer: '5',
+        question: 'What is the result of 10 ÷ 2?',
+        multipleChoices: false,
+        point: 15,
+        options: [
+          { text: '5', correct: true },
+          { text: '4', correct: false },
+          { text: '6', correct: false },
+          { text: '8', correct: false },
+        ],
       },
       {
-        id: 3,
-        question: 3,
-        text: 'What is the value of π?',
-        options: ['3.14', '2.14', '3.41', '4.13'],
-        correctAnswer: '3.14',
+        question: 'What is the value of π?',
+        multipleChoices: false,
+        point: 15,
+        options: [
+          { text: '3.14', correct: true },
+          { text: '2.14', correct: false },
+          { text: '3.41', correct: false },
+          { text: '4.13', correct: false },
+        ],
       },
     ],
   },
   {
     id: 3,
-    title: 'Science Quiz',
-    start: '01:00 pm',
-    end: '02:00 pm',
     date: '11/09/2024',
+    description: 'This quiz focuses on basic science concepts.',
+    name: 'Science Quiz',
     teacher: 'Teacher C',
     points: 60,
     students: 20,
+    start: '01:00 pm',
+    end: '02:00 pm',
     status: 'active',
+    totalQuestion: 3,
     questions: [
       {
-        id: 1,
-        question: 1,
-        text: 'What is the unit of energy?',
-        options: ['Joule', 'Newton', 'Watt', 'Kilo'],
-        correctAnswer: 'Joule',
+        question: 'What is the unit of energy?',
+        multipleChoices: false,
+        point: 20,
+        options: [
+          { text: 'Joule', correct: true },
+          { text: 'Newton', correct: false },
+          { text: 'Watt', correct: false },
+          { text: 'Kilo', correct: false },
+        ],
       },
       {
-        id: 2,
-        question: 2,
-        text: 'Which planet is closest to the Sun?',
-        options: ['Mercury', 'Venus', 'Earth', 'Mars'],
-        correctAnswer: 'Mercury',
+        question: 'Which planet is closest to the Sun?',
+        multipleChoices: false,
+        point: 20,
+        options: [
+          { text: 'Mercury', correct: true },
+          { text: 'Venus', correct: false },
+          { text: 'Earth', correct: false },
+          { text: 'Mars', correct: false },
+        ],
       },
       {
-        id: 3,
-        question: 3,
-        text: 'What is the state of matter when heated strongly?',
-        options: ['Gaseous', 'Liquid', 'Solid', 'Plasma'],
-        correctAnswer: 'Plasma',
+        question: 'What is the state of matter when heated strongly?',
+        multipleChoices: false,
+        point: 20,
+        options: [
+          { text: 'Gaseous', correct: false },
+          { text: 'Liquid', correct: false },
+          { text: 'Solid', correct: false },
+          { text: 'Plasma', correct: true },
+        ],
       },
     ],
   },
   {
     id: 4,
-    title: 'History Quiz',
-    start: '03:00 pm',
-    end: '04:00 pm',
     date: '12/09/2024',
+    description: 'This quiz tests knowledge of world history.',
+    name: 'History Quiz',
     teacher: 'Teacher D',
     points: 55,
     students: 28,
+    start: '03:00 pm',
+    end: '04:00 pm',
     status: 'active',
+    totalQuestion: 3,
     questions: [
       {
-        id: 1,
-        question: 1,
-        text: 'In what year did the French Revolution occur?',
-        options: ['1789', '1776', '1804', '1815'],
-        correctAnswer: '1789',
-      },
-      {
-        id: 2,
-        question: 2,
-        text: 'Who was the first president of the United States?',
+        question: 'In what year did the French Revolution occur?',
+        multipleChoices: false,
+        point: 20,
         options: [
-          'George Washington',
-          'Abraham Lincoln',
-          'Thomas Jefferson',
-          'John Kennedy',
+          { text: '1789', correct: true },
+          { text: '1776', correct: false },
+          { text: '1804', correct: false },
+          { text: '1815', correct: false },
         ],
-        correctAnswer: 'George Washington',
       },
       {
-        id: 3,
-        question: 3,
-        text: 'Which civilization built the pyramids?',
-        options: ['Egyptian', 'Roman', 'Babylonian', 'Chinese'],
-        correctAnswer: 'Egyptian',
+        question: 'Who was the first president of the United States?',
+        multipleChoices: false,
+        point: 15,
+        options: [
+          { text: 'George Washington', correct: true },
+          { text: 'Abraham Lincoln', correct: false },
+          { text: 'Thomas Jefferson', correct: false },
+          { text: 'John Kennedy', correct: false },
+        ],
+      },
+      {
+        question: 'Which civilization built the pyramids?',
+        multipleChoices: false,
+        point: 20,
+        options: [
+          { text: 'Egyptian', correct: true },
+          { text: 'Roman', correct: false },
+          { text: 'Babylonian', correct: false },
+          { text: 'Chinese', correct: false },
+        ],
       },
     ],
   },
   {
     id: 5,
-    title: 'Geography Quiz',
-    start: '09:00 am',
-    end: '10:00 am',
     date: '13/09/2024',
+    description: 'This quiz tests geographical knowledge.',
+    name: 'Geography Quiz',
     teacher: 'Teacher E',
     points: 45,
     students: 32,
+    start: '09:00 am',
+    end: '10:00 am',
     status: 'inactive',
+    totalQuestion: 3,
     questions: [
       {
-        id: 1,
-        question: 1,
-        text: 'What is the capital of Japan?',
-        options: ['Tokyo', 'Beijing', 'Seoul', 'Bangkok'],
-        correctAnswer: 'Tokyo',
-      },
-      {
-        id: 2,
-        question: 2,
-        text: 'What is the largest ocean in the world?',
+        question: 'What is the capital of Japan?',
+        multipleChoices: false,
+        point: 15,
         options: [
-          'Pacific Ocean',
-          'Atlantic Ocean',
-          'Indian Ocean',
-          'Arctic Ocean',
+          { text: 'Tokyo', correct: true },
+          { text: 'Beijing', correct: false },
+          { text: 'Seoul', correct: false },
+          { text: 'Bangkok', correct: false },
         ],
-        correctAnswer: 'Pacific Ocean',
       },
       {
-        id: 3,
-        question: 3,
-        text: 'What is the highest mountain peak in the world?',
-        options: ['Everest', 'Kilimanjaro', 'Elbrus', 'McKinley'],
-        correctAnswer: 'Everest',
+        question: 'What is the largest ocean in the world?',
+        multipleChoices: false,
+        point: 15,
+        options: [
+          { text: 'Pacific Ocean', correct: true },
+          { text: 'Atlantic Ocean', correct: false },
+          { text: 'Indian Ocean', correct: false },
+          { text: 'Arctic Ocean', correct: false },
+        ],
+      },
+      {
+        question: 'What is the highest mountain peak in the world?',
+        multipleChoices: false,
+        point: 15,
+        options: [
+          { text: 'Everest', correct: true },
+          { text: 'Kilimanjaro', correct: false },
+          { text: 'Elbrus', correct: false },
+          { text: 'McKinley', correct: false },
+        ],
       },
     ],
   },
   {
     id: 6,
-    title: 'Physics Quiz',
-    start: '11:00 am',
-    end: '12:00 pm',
     date: '14/09/2024',
+    description: 'This quiz tests basic physics concepts.',
+    name: 'Physics Quiz',
     teacher: 'Teacher F',
     points: 70,
     students: 27,
+    start: '11:00 am',
+    end: '12:00 pm',
     status: 'active',
+    totalQuestion: 3,
     questions: [
       {
-        id: 1,
-        question: 1,
-        text: 'What is the speed of light in a vacuum?',
+        question: 'What is the speed of light in a vacuum?',
+        multipleChoices: false,
+        point: 25,
         options: [
-          '300,000 km/s',
-          '150,000 km/s',
-          '450,000 km/s',
-          '600,000 km/s',
+          { text: '300,000 km/s', correct: true },
+          { text: '150,000 km/s', correct: false },
+          { text: '450,000 km/s', correct: false },
+          { text: '600,000 km/s', correct: false },
         ],
-        correctAnswer: '300,000 km/s',
       },
       {
-        id: 2,
-        question: 2,
-        text: 'What is Newton’s first law?',
+        question: 'What is Newton’s first law?',
+        multipleChoices: false,
+        point: 25,
         options: [
-          'An object in motion stays in motion',
-          'Force equals mass times acceleration',
-          'For every action there is an equal and opposite reaction',
+          { text: 'An object in motion stays in motion', correct: true },
+          { text: 'Force equals mass times acceleration', correct: false },
+          {
+            text: 'For every action there is an equal and opposite reaction',
+            correct: false,
+          },
+          { text: 'Gravitational force is constant', correct: false },
         ],
-        correctAnswer: 'An object in motion stays in motion',
       },
       {
-        id: 3,
-        question: 3,
-        text: 'What is the symbol for acceleration?',
-        options: ['a', 'v', 't', 'm'],
-        correctAnswer: 'a',
+        question: 'What is the formula for energy?',
+        multipleChoices: false,
+        point: 20,
+        options: [
+          { text: 'E=mc^2', correct: true },
+          { text: 'F=ma', correct: false },
+          { text: 'W=Fd', correct: false },
+          { text: 'P=IV', correct: false },
+        ],
       },
     ],
   },
-  {
-    id: 7,
-    title: 'Chemistry Quiz',
-    start: '02:00 pm',
-    end: '03:00 pm',
-    date: '15/09/2024',
-    teacher: 'Teacher G',
-    points: 65,
-    students: 22,
-    status: 'inactive',
-    questions: [
-      {
-        id: 1,
-        question: 1,
-        text: 'What is the chemical formula of water?',
-        options: ['H2O', 'O2', 'CO2', 'H2'],
-        correctAnswer: 'H2O',
-      },
-      {
-        id: 2,
-        question: 2,
-        text: 'What element is found in every organic compound?',
-        options: ['Carbon', 'Oxygen', 'Hydrogen', 'Nitrogen'],
-        correctAnswer: 'Carbon',
-      },
-      {
-        id: 3,
-        question: 3,
-        text: 'What is the atomic number of hydrogen?',
-        options: ['1', '2', '3', '4'],
-        correctAnswer: '1',
-      },
-    ],
-  },
-  {
-    id: 8,
-    title: 'Biology Quiz',
-    start: '04:00 pm',
-    end: '05:00 pm',
-    date: '16/09/2024',
-    teacher: 'Teacher H',
-    points: 55,
-    students: 30,
-    status: 'active',
-    questions: [
-      {
-        id: 1,
-        question: 1,
-        text: 'What is the basic unit of life?',
-        options: ['Cell', 'Organ', 'System', 'Tissue'],
-        correctAnswer: 'Cell',
-      },
-      {
-        id: 2,
-        question: 2,
-        text: 'What is the function of DNA?',
-        options: [
-          'Store genetic information',
-          'Transmit nerve signals',
-          'Absorb nutrients',
-          'Filter blood',
-        ],
-        correctAnswer: 'Store genetic information',
-      },
-      {
-        id: 3,
-        question: 3,
-        text: 'Which part of the plant is responsible for photosynthesis?',
-        options: ['Leaf', 'Root', 'Stem', 'Flower'],
-        correctAnswer: 'Leaf',
-      },
-    ],
-  },
-  {
-    id: 8,
-    title: 'Biology Quiz',
-    start: '04:00 pm',
-    end: '05:00 pm',
-    date: '16/09/2024',
-    teacher: 'Teacher H',
-    points: 55,
-    students: 30,
-    status: 'active',
-    questions: [
-      {
-        id: 1,
-        question: 1,
-        text: 'What is the basic unit of life?',
-        options: ['Cell', 'Organ', 'System', 'Tissue'],
-        correctAnswer: 'Cell',
-      },
-      {
-        id: 2,
-        question: 2,
-        text: 'What is the function of DNA?',
-        options: [
-          'Store genetic information',
-          'Transmit nerve signals',
-          'Absorb nutrients',
-          'Filter blood',
-        ],
-        correctAnswer: 'Store genetic information',
-      },
-      {
-        id: 3,
-        question: 3,
-        text: 'Which part of the plant is responsible for photosynthesis?',
-        options: ['Leaf', 'Root', 'Stem', 'Flower'],
-        correctAnswer: 'Leaf',
-      },
-    ],
-  },
-]);
+]); */
 </script>

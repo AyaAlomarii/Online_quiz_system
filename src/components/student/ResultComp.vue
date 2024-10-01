@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm  q-pa-md">
+  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm q-pa-md">
     <q-card class="br-8 q-pa-sm q-pb-lg bg-white text-black">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
@@ -11,7 +11,7 @@
           />
           <div class="column text-h6">
             <span>
-              {{ quiz.title }}
+              {{ quiz.name }}
             </span>
 
             <span class="text-body2 text-grey"> {{ quiz.date }}</span>

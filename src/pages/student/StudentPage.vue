@@ -433,7 +433,7 @@ const quizzes = ref<Quiz[]>([
 
 const filtered = computed<Quiz[]>(() => {
   return quizzes.value.filter((element) =>
-    element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
   );
 });
 
@@ -451,7 +451,7 @@ const filterByDateBtn=()=>{
  !
  const filtered = computed<Quiz[]>(() => {
   const arr = quizzes.value.filter((element: Quiz) =>
-    element.title.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
   );
   // if (sort) {
     // arr.sort?

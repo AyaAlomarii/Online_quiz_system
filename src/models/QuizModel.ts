@@ -1,12 +1,15 @@
 import DataObject from './DataObject';
 
+export interface Options {
+  text: string;
+  correct: boolean;
+
+}
 export interface Question {
   question: string;
   multipleChoices: boolean;
-  options: {
-    text: string;
-    correct: boolean;
-  };
+  point:number;
+  options: Options []
 }
 
 export interface Quiz extends DataObject {
@@ -20,6 +23,7 @@ export interface Quiz extends DataObject {
   start: string;
   end: string;
   status: string;
+  totalQuestion:number,
   questions: Question[];
 }
 
