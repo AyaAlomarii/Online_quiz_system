@@ -103,7 +103,7 @@
             >
               <div class="">
                 <q-input
-                  v-model="date"
+                  v-model="dateTime"
                   dense
                   label="Date"
                   class="q-px-sm br-8 bg-white"
@@ -116,7 +116,7 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
+                        <q-date v-model="date" mask="YYYY-MM-DD">
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
@@ -137,11 +137,7 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-time
-                          v-model="date"
-                          mask="YYYY-MM-DD HH:mm"
-                          format24h
-                        >
+                        <q-time v-model="time" mask="HH:mm" format24h>
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
@@ -155,6 +151,7 @@
                     </q-icon>
                   </template>
                 </q-input>
+                <!--  {{ date }}/{{time}}/{{dateTime}} -->
               </div>
 
               <q-input
@@ -174,31 +171,46 @@
                 class="q-px-sm br-8 bg-white"
                 outlined
               />
-              <div v-for="(qes, i) in newQuestion" :key="i" class="row q-py-md">
-                <q-input
-                  v-model="qes.question"
+              <div v-for="(qes, i) in newQuestion" :key="i" class=" q-py-md">
+                <div class=" row q-py-sm justify-end">
+                  <q-btn
                   dense
-                  label="Question"
-                  type="text"
-                  class="q-px-sm br-8 col-8 bg-white"
-                  outlined
-                />
-                <q-input
-                  v-model="qes.point"
-                  dense
-                  label="Points"
-                  type="number"
-                  class="q-px-sm br-8 col-4 bg-white"
-                  outlined
-                />
+                  no-caps
+                  unelevated
+                  class="  br-8 q-px-md bg-none"
+                  @click="removeQuestion(i)"
+                  icon="delete_forever"
+                  text-color="red"
+                >
+                </q-btn>
+                </div>
 
-                <q-toggle
-                  v-model="qes.multipleChoices"
-                  label="Student can select more than one choice ?"
-                  color="primary"
-                  class="q-px-sm q-py-md col-12 justify-end"
-                  dense
-                />
+                <div class="row">
+                  <q-input
+                    v-model="qes.question"
+                    dense
+                    label="Question"
+                    type="text"
+                    class="q-px-sm br-8 col-8 bg-white"
+                    outlined
+                  />
+                  <q-input
+                    v-model="qes.point"
+                    dense
+                    label="Points"
+                    type="number"
+                    class="q-px-sm br-8 col-4 bg-white"
+                    outlined
+                  />
+
+                  <q-toggle
+                    v-model="qes.multipleChoices"
+                    label="Student can select more than one choice ?"
+                    color="primary"
+                    class="q-px-sm q-py-md col-12 justify-end"
+                    dense
+                  />
+                </div>
 
                 <div class="row">
                   <div
@@ -232,16 +244,6 @@
                     class="br-8 q-px-md bg-attempt text-primary"
                     @click="addNewQuestion"
                     icon-right="add_box"
-                  />
-                  <q-btn
-                    label="Remove"
-                    dense
-                    no-caps
-                    unelevated
-                    class="br-8 q-px-md bg-attempt text-primary"
-                    @click="removeQuestion(i)"
-                    icon-right="disabled_by_default
-"
                   />
                 </div>
               </div>
@@ -284,16 +286,18 @@ import { ref, computed, onMounted } from 'vue';
 import QuizComp from 'src/components/teacher/QuizCompTeach.vue';
 import ResultComp from 'src/components/teacher/ResultCompTeach.vue';
 import { Question, Quiz } from '@/models/QuizModel';
-import CreateNewQuiz from 'src/functions/createQuizFun';
+import CreateNewQuiz from 'src/functions/CreateNewQuizFunc';
 import DataObject from '@/models/DataObject';
 // import { LocalStorage } from 'quasar';
 import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
-import { LocalStorage } from 'quasar';
+// import { LocalStorage } from 'quasar';
 
 //variables
 const search = ref<string>('');
 const showCreateDialog = ref<boolean>(false);
 const date = ref<string>('');
+const time = ref<string>('');
+
 const quizName = ref<string>('');
 const quizDescription = ref<string>('');
 // const newQuiz = ref<Quiz>();
@@ -404,6 +408,10 @@ const quizzes = ref<Quiz[]>([]);
   },
 ]);
  */
+const dateTime = computed(() => {
+  return `${date.value}${time.value}`;
+});
+
 const tab = ref<string>('quiz');
 
 const tabsHeader = ref([
@@ -480,7 +488,6 @@ const sumAllPoints = () => {
 const handelSubmitNewQuiz = async () => {
   sumAllPoints();
 
-
   quizzesLocal.value = {
     id: 0,
     date: date.value,
@@ -489,9 +496,9 @@ const handelSubmitNewQuiz = async () => {
     teacher: '',
     points: totalPoints.value,
     students: 0,
-    start: '',
-    end: '',
-    status: '',
+    start: time.value,
+    end: time.value,
+    status: 'active',
     totalQuestion: newQuestion.value.length,
     questions: newQuestion.value,
   };
@@ -499,11 +506,11 @@ const handelSubmitNewQuiz = async () => {
 
   // updateQuiz.value=[...existingQuizzes,quizzesLocal.value]
   // existingQuizzes.push(quizzesLocal.value)
-  // const createNewQuiz = new CreateNewQuiz();
-   quizzes.value.push(quizzesLocal.value);
-console.log( 12,quizzes.value);
+  const createNewQuiz = new CreateNewQuiz();
+  quizzes.value.push(quizzesLocal.value);
+  console.log(12, quizzes.value);
 
-  //  await createNewQuiz.executeAsync({ quizzes: quizzes.value } as DataObject);
+  await createNewQuiz.executeAsync({ quizzes: quizzes.value } as DataObject);
 
   // newQuiz.value = [];
   quizName.value = '';

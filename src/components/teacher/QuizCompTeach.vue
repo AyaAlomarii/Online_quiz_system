@@ -25,8 +25,8 @@
       </q-card-section>
 
       <q-card-section class="column text-body2 text-grey q-py-none">
-        <span>{{ quiz.teacher }}</span>
-        <span>50 Point</span>
+        <span>{{ quiz.teacher }}teacher</span>
+        <span>{{quiz.points}} Point</span>
         <span> {{ quiz.students }} Student</span>
         <div class="row justify-end q-gutter-md">
           <q-btn

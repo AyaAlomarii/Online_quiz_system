@@ -1,7 +1,7 @@
 import DataObject from 'src/models/DataObject';
 import FuncAsync from './FuncAsync';
 import { Quiz } from 'src/models/QuizModel';
-// import { LocalStorage } from 'quasar';
+import { LocalStorage } from 'quasar';
 export default class CreateNewQuiz implements FuncAsync<DataObject, Quiz[]> {
   async executeAsync(data: DataObject): Promise<Quiz[]> {
     try {
@@ -10,7 +10,7 @@ export default class CreateNewQuiz implements FuncAsync<DataObject, Quiz[]> {
       }
 console.log(data,1);
 
-      // LocalStorage.set('quizzefs', data.quizzes);
+      LocalStorage.set('quizzes', data.quizzes);
 
       // return Promise.resolve(res);
     } catch (error) {
