@@ -175,7 +175,7 @@
                 outlined
               />
               <div v-for="(qes, i) in newQuestion" :key="i" class="row q-py-md">
-              <q-input
+                <q-input
                   v-model="qes.question"
                   dense
                   label="Question"
@@ -191,7 +191,7 @@
                   class="q-px-sm br-8 col-4 bg-white"
                   outlined
                 />
-             
+
                 <q-toggle
                   v-model="qes.multipleChoices"
                   label="Student can select more than one choice ?"
@@ -286,8 +286,9 @@ import ResultComp from 'src/components/teacher/ResultCompTeach.vue';
 import { Question, Quiz } from '@/models/QuizModel';
 import CreateNewQuiz from 'src/functions/createQuizFun';
 import DataObject from '@/models/DataObject';
-import { LocalStorage } from 'quasar';
+// import { LocalStorage } from 'quasar';
 import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
+import { LocalStorage } from 'quasar';
 
 //variables
 const search = ref<string>('');
@@ -298,195 +299,12 @@ const quizDescription = ref<string>('');
 // const newQuiz = ref<Quiz>();
 const quizzesLocal = ref<Quiz>();
 const totalPoints = ref<number>(0);
-const updateQuiz = ref<Quiz[]>([]);
+// const updateQuiz = ref<Quiz[]>([]);
 const quizzes = ref<Quiz[]>([]);
-
-  
 
 // const question = ref<string>('');
 // const options = ref<string[]>('');
 
-const tab = ref<string>('quiz');
-
-const tabsHeader = ref([
-  {
-    name: 'quiz',
-    label: 'Quiz',
-    to: RoutesPaths.TEACHER_QUIZ,
-    icon: 'group',
-  },
-  {
-    name: 'result',
-    label: 'Results',
-    to: RoutesPaths.TEACHER_RESULT,
-    icon: 'computer',
-  },
-]);
-
-
-
-
-onMounted(async()=>{
-  const quizzesTwo = new GetAllQuizzes
-  // quizzesTwo.executeAsync()
-   quizzes.value=await quizzesTwo.executeAsync() as Quiz[]
-  
-})
-
-
-
-const newQuestion = ref<Question[]>([
-  {
-    question: '',
-    multipleChoices: false,
-    point: 0,
-    options: [
-      { text: '', correct: false },
-      { text: '', correct: false },
-      { text: '', correct: false },
-      { text: '', correct: false },
-    ],
-  },
-]);
-
-
-
-const addNewQuestion = () => {
-  newQuestion.value.push({
-    question: '',
-    multipleChoices: false,
-    point: 0,
-    options: [
-      { text: '', correct: false },
-      { text: '', correct: false },
-      { text: '', correct: false },
-      { text: '', correct: false },
-    ],
-  });
-};
-
-const removeQuestion = (index) => {
-  if (index !== 0) {
-    newQuestion.value.splice(index, 1);
-  }
-};
-
-const filtered = computed<Quiz[]>(() => {
-  return quizzes.value.filter((element) =>
-    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
-  );
-});
-
-const sumAllPoints = () => {
-  totalPoints.value = 0; // Initialize totalPoints to 0
-  newQuestion.value.forEach((ele) => {
-    totalPoints.value += Number(ele.point); // Convert ele.point to a number before adding
-    console.log(typeof(ele.point), ele.point);
-  });
-  console.log(typeof(totalPoints.value), totalPoints.value);
-};
-
-const handelSubmitNewQuiz = () => {
-  sumAllPoints();
-  
-  quizzesLocal.value={
-    id: 0,
-    date: date.value,
-    description: quizDescription.value,
-    name: quizName.value,
-    teacher: '',
-    points: totalPoints.value,
-    students: 0,
-    start: '',
-    end: '',
-    status: '',
-    totalQuestion: newQuestion.value.length ,
-    questions: newQuestion.value,
-  }
-  // const existingQuizzes = (LocalStorage.getItem('quizzes') || []) as []
-  
-      // updateQuiz.value=[...existingQuizzes,quizzesLocal.value]
-    // existingQuizzes.push(quizzesLocal.value)
-  const createNewQuiz = new CreateNewQuiz();
-quizzes.value.push(quizzesLocal.value)
-  createNewQuiz.executeAsync({ quizzes: quizzes.value } as DataObject);
-
-  // newQuiz.value = [];
-  quizName.value = '';
-  date.value = '';
-  quizDescription.value = '';
-  totalPoints.value=0
-  newQuestion.value = [
-    {
-      question: '',
-      multipleChoices: false,
-      point: 0,
-      options: [
-        { text: '', correct: false },
-        { text: '', correct: false },
-        { text: '', correct: false },
-        { text: '', correct: false },
-      ],
-    },
-  ];
-};
-
-
-
-
-const resetOnCancel = () => {
-  // newQuiz.value = [];
-  quizName.value = '';
-  date.value = '';
-  quizDescription.value = '';
-  newQuestion.value = [
-    {
-      question: '',
-      multipleChoices: false,
-      point: 0,
-      options: [
-        { text: '', correct: false },
-        { text: '', correct: false },
-        { text: '', correct: false },
-        { text: '', correct: false },
-      ],
-    },
-  ];
-};
-
-
-
-/*  const sortedByDate = computed<Quiz[]>(() => {
-  return quizzes.value.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-});
-
-const filterByDateBtn=()=>{
-  quizzes.value=sortedByDate.value
-  console.log(sortedByDate.value);
-
-}
-
-
- !
- const filtered = computed<Quiz[]>(() => {
-  const arr = quizzes.value.filter((element: Quiz) =>
-    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
-  );
-  // if (sort) {
-    // arr.sort?
-  // }
-  return arr;
-});
-
-const sortedByDate = computed<Quiz[]>(() => {
-  return (quizzes.value || []).sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-});
-
-
- */
-//card data
 /* const quizzes = ref<Quiz[]>([
   {
     id: 1,
@@ -502,7 +320,7 @@ const sortedByDate = computed<Quiz[]>(() => {
     totalQuestion: 3,
     questions: [
       {
-        question: 'What is the meaning of the word "Shorouq"?',
+        question: 'What is the meaning of "Shorouq"?',
         multipleChoices: false,
         point: 10,
         options: [
@@ -513,7 +331,7 @@ const sortedByDate = computed<Quiz[]>(() => {
         ],
       },
       {
-        question: 'What is the plural of the word "Pen"?',
+        question: 'What is the plural of "Pen"?',
         multipleChoices: false,
         point: 15,
         options: [
@@ -524,7 +342,7 @@ const sortedByDate = computed<Quiz[]>(() => {
         ],
       },
       {
-        question: 'Complete the sentence: "Knowledge is light and ..."',
+        question: 'Complete the sentence: "Knowledge is light and..."',
         multipleChoices: false,
         point: 25,
         options: [
@@ -584,200 +402,178 @@ const sortedByDate = computed<Quiz[]>(() => {
       },
     ],
   },
+]);
+ */
+const tab = ref<string>('quiz');
+
+const tabsHeader = ref([
   {
-    id: 3,
-    date: '11/09/2024',
-    description: 'This quiz focuses on basic science concepts.',
-    name: 'Science Quiz',
-    teacher: 'Teacher C',
-    points: 60,
-    students: 20,
-    start: '01:00 pm',
-    end: '02:00 pm',
-    status: 'active',
-    totalQuestion: 3,
-    questions: [
-      {
-        question: 'What is the unit of energy?',
-        multipleChoices: false,
-        point: 20,
-        options: [
-          { text: 'Joule', correct: true },
-          { text: 'Newton', correct: false },
-          { text: 'Watt', correct: false },
-          { text: 'Kilo', correct: false },
-        ],
-      },
-      {
-        question: 'Which planet is closest to the Sun?',
-        multipleChoices: false,
-        point: 20,
-        options: [
-          { text: 'Mercury', correct: true },
-          { text: 'Venus', correct: false },
-          { text: 'Earth', correct: false },
-          { text: 'Mars', correct: false },
-        ],
-      },
-      {
-        question: 'What is the state of matter when heated strongly?',
-        multipleChoices: false,
-        point: 20,
-        options: [
-          { text: 'Gaseous', correct: false },
-          { text: 'Liquid', correct: false },
-          { text: 'Solid', correct: false },
-          { text: 'Plasma', correct: true },
-        ],
-      },
-    ],
+    name: 'quiz',
+    label: 'Quiz',
+    to: RoutesPaths.TEACHER_QUIZ,
+    icon: 'group',
   },
   {
-    id: 4,
-    date: '12/09/2024',
-    description: 'This quiz tests knowledge of world history.',
-    name: 'History Quiz',
-    teacher: 'Teacher D',
-    points: 55,
-    students: 28,
-    start: '03:00 pm',
-    end: '04:00 pm',
-    status: 'active',
-    totalQuestion: 3,
-    questions: [
-      {
-        question: 'In what year did the French Revolution occur?',
-        multipleChoices: false,
-        point: 20,
-        options: [
-          { text: '1789', correct: true },
-          { text: '1776', correct: false },
-          { text: '1804', correct: false },
-          { text: '1815', correct: false },
-        ],
-      },
-      {
-        question: 'Who was the first president of the United States?',
-        multipleChoices: false,
-        point: 15,
-        options: [
-          { text: 'George Washington', correct: true },
-          { text: 'Abraham Lincoln', correct: false },
-          { text: 'Thomas Jefferson', correct: false },
-          { text: 'John Kennedy', correct: false },
-        ],
-      },
-      {
-        question: 'Which civilization built the pyramids?',
-        multipleChoices: false,
-        point: 20,
-        options: [
-          { text: 'Egyptian', correct: true },
-          { text: 'Roman', correct: false },
-          { text: 'Babylonian', correct: false },
-          { text: 'Chinese', correct: false },
-        ],
-      },
-    ],
+    name: 'result',
+    label: 'Results',
+    to: RoutesPaths.TEACHER_RESULT,
+    icon: 'computer',
   },
+]);
+
+onMounted(async () => {
+  const quizzesTwo = new GetAllQuizzes();
+  quizzes.value = (await quizzesTwo.executeAsync()) as Quiz[];
+});
+
+const newQuestion = ref<Question[]>([
   {
-    id: 5,
-    date: '13/09/2024',
-    description: 'This quiz tests geographical knowledge.',
-    name: 'Geography Quiz',
-    teacher: 'Teacher E',
-    points: 45,
-    students: 32,
-    start: '09:00 am',
-    end: '10:00 am',
-    status: 'inactive',
-    totalQuestion: 3,
-    questions: [
-      {
-        question: 'What is the capital of Japan?',
-        multipleChoices: false,
-        point: 15,
-        options: [
-          { text: 'Tokyo', correct: true },
-          { text: 'Beijing', correct: false },
-          { text: 'Seoul', correct: false },
-          { text: 'Bangkok', correct: false },
-        ],
-      },
-      {
-        question: 'What is the largest ocean in the world?',
-        multipleChoices: false,
-        point: 15,
-        options: [
-          { text: 'Pacific Ocean', correct: true },
-          { text: 'Atlantic Ocean', correct: false },
-          { text: 'Indian Ocean', correct: false },
-          { text: 'Arctic Ocean', correct: false },
-        ],
-      },
-      {
-        question: 'What is the highest mountain peak in the world?',
-        multipleChoices: false,
-        point: 15,
-        options: [
-          { text: 'Everest', correct: true },
-          { text: 'Kilimanjaro', correct: false },
-          { text: 'Elbrus', correct: false },
-          { text: 'McKinley', correct: false },
-        ],
-      },
+    question: '',
+    multipleChoices: false,
+    point: 0,
+    options: [
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
     ],
   },
-  {
-    id: 6,
-    date: '14/09/2024',
-    description: 'This quiz tests basic physics concepts.',
-    name: 'Physics Quiz',
-    teacher: 'Teacher F',
-    points: 70,
-    students: 27,
-    start: '11:00 am',
-    end: '12:00 pm',
-    status: 'active',
-    totalQuestion: 3,
-    questions: [
-      {
-        question: 'What is the speed of light in a vacuum?',
-        multipleChoices: false,
-        point: 25,
-        options: [
-          { text: '300,000 km/s', correct: true },
-          { text: '150,000 km/s', correct: false },
-          { text: '450,000 km/s', correct: false },
-          { text: '600,000 km/s', correct: false },
-        ],
-      },
-      {
-        question: 'What is Newton’s first law?',
-        multipleChoices: false,
-        point: 25,
-        options: [
-          { text: 'An object in motion stays in motion', correct: true },
-          { text: 'Force equals mass times acceleration', correct: false },
-          {
-            text: 'For every action there is an equal and opposite reaction',
-            correct: false,
-          },
-          { text: 'Gravitational force is constant', correct: false },
-        ],
-      },
-      {
-        question: 'What is the formula for energy?',
-        multipleChoices: false,
-        point: 20,
-        options: [
-          { text: 'E=mc^2', correct: true },
-          { text: 'F=ma', correct: false },
-          { text: 'W=Fd', correct: false },
-          { text: 'P=IV', correct: false },
-        ],
-      },
+]);
+
+const addNewQuestion = () => {
+  newQuestion.value.push({
+    question: '',
+    multipleChoices: false,
+    point: 0,
+    options: [
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
+      { text: '', correct: false },
     ],
-  },
-]); */
+  });
+};
+
+const removeQuestion = (index) => {
+  if (index !== 0) {
+    newQuestion.value.splice(index, 1);
+  }
+};
+
+const filtered = computed<Quiz[]>(() => {
+  return (
+    quizzes.value && Array.isArray(quizzes.value) ? quizzes.value : []
+  ).filter((element) =>
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+  );
+});
+
+const sumAllPoints = () => {
+  totalPoints.value = 0; // Initialize totalPoints to 0
+  newQuestion.value.forEach((ele) => {
+    totalPoints.value += Number(ele.point); // Convert ele.point to a number before adding
+    console.log(typeof ele.point, ele.point);
+  });
+  console.log(typeof totalPoints.value, totalPoints.value);
+};
+
+const handelSubmitNewQuiz = async () => {
+  sumAllPoints();
+
+
+  quizzesLocal.value = {
+    id: 0,
+    date: date.value,
+    description: quizDescription.value,
+    name: quizName.value,
+    teacher: '',
+    points: totalPoints.value,
+    students: 0,
+    start: '',
+    end: '',
+    status: '',
+    totalQuestion: newQuestion.value.length,
+    questions: newQuestion.value,
+  };
+  // const existingQuizzes = (LocalStorage.getItem('quizzes') || []) as []
+
+  // updateQuiz.value=[...existingQuizzes,quizzesLocal.value]
+  // existingQuizzes.push(quizzesLocal.value)
+  // const createNewQuiz = new CreateNewQuiz();
+   quizzes.value.push(quizzesLocal.value);
+console.log( 12,quizzes.value);
+
+  //  await createNewQuiz.executeAsync({ quizzes: quizzes.value } as DataObject);
+
+  // newQuiz.value = [];
+  quizName.value = '';
+  date.value = '';
+  quizDescription.value = '';
+  totalPoints.value = 0;
+  newQuestion.value = [
+    {
+      question: '',
+      multipleChoices: false,
+      point: 0,
+      options: [
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+      ],
+    },
+  ];
+};
+
+const resetOnCancel = () => {
+  // newQuiz.value = [];
+  quizName.value = '';
+  date.value = '';
+  quizDescription.value = '';
+  newQuestion.value = [
+    {
+      question: '',
+      multipleChoices: false,
+      point: 0,
+      options: [
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+        { text: '', correct: false },
+      ],
+    },
+  ];
+};
+
+/*  const sortedByDate = computed<Quiz[]>(() => {
+  return quizzes.value.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+});
+
+const filterByDateBtn=()=>{
+  quizzes.value=sortedByDate.value
+  console.log(sortedByDate.value);
+
+}
+
+
+ !
+ const filtered = computed<Quiz[]>(() => {
+  const arr = quizzes.value.filter((element: Quiz) =>
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+  );
+  // if (sort) {
+    // arr.sort?
+  // }
+  return arr;
+});
+
+const sortedByDate = computed<Quiz[]>(() => {
+  return (quizzes.value || []).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+});
+
+
+ */
+//card data
 </script>
