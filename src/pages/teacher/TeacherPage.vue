@@ -248,7 +248,7 @@
                 </div>
               </div>
 
-              <div class="q-px-sm q-py-md" align="right">
+              <div class="q-px-sm q-ma-none " align="right">
                 <q-btn
                   type="submit"
                   label="Save"
