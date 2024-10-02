@@ -171,8 +171,8 @@
                 class="q-px-sm br-8 bg-white"
                 outlined
               />
-              <div v-for="(qes, i) in newQuestion" :key="i" class=" q-py-md">
-                <div class=" row q-py-sm justify-end">
+              <div v-for="(qes, i) in newQuestion" :key="i" class=" q-py-sm">
+                <div class=" row  justify-end" >
                   <q-btn
                   dense
                   no-caps
@@ -191,7 +191,7 @@
                     dense
                     label="Question"
                     type="text"
-                    class="q-px-sm br-8 col-8 bg-white"
+                    class="q-px-sm br-8 col-9 bg-white"
                     outlined
                   />
                   <q-input
@@ -199,7 +199,7 @@
                     dense
                     label="Points"
                     type="number"
-                    class="q-px-sm br-8 col-4 bg-white"
+                    class="q-px-sm br-8 col-3 bg-white"
                     outlined
                   />
 
@@ -207,7 +207,7 @@
                     v-model="qes.multipleChoices"
                     label="Student can select more than one choice ?"
                     color="primary"
-                    class="q-px-sm q-py-md col-12 justify-end"
+                    class="q-px-sm q-py-md col-12 justify-end grey-text"
                     dense
                   />
                 </div>
@@ -227,12 +227,12 @@
                       outlined
                     >
                       <template v-slot:append>
-                        <q-checkbox v-model="option.correct" />
+                        <q-checkbox v-model="option.correct" dense class="br-8" />
                       </template>
                     </q-input>
                   </div>
                 </div>
-                <span class="q-px-sm row text-grey col-12 justify-end"
+                <span class="q-px-sm row col-12 justify-end grey-text"
                   >tick the box of right answer</span
                 >
                 <div class="q-px-sm row col-12 justify-between q-py-md">
