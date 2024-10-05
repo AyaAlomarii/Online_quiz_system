@@ -17,7 +17,6 @@ export default interface DataObject {
     | any;
 }
 
-
 /* The `DataObject` defined here is an **interface** in TypeScript that represents a **flexible object** whose properties can be of various types. This interface is designed to accommodate a wide variety of types for its properties, making it suitable for scenarios where you need to work with objects that have dynamic or unknown structures.
 
 ### Explanation of `DataObject` Interface
