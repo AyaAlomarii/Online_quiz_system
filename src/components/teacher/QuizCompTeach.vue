@@ -351,16 +351,16 @@ const handelSubmitUpdatedQuiz = async () => {
   sumAllPoints();
 
   updatedQuiz.value = {
-    id: 0,
+    id: props.quiz.id,
     date: date.value,
     description: quizDescription.value,
     name: quizName.value,
-    teacher: 'Teacher A',
+    teacher: props.quiz.teacher,
     points: totalPoints.value,
-    students: 0,
+    students: props.quiz.points,
     start: time.value,
     end: time.value,
-    status: 'active',
+    status: props.quiz.status,
     totalQuestion: newQuestion.value.length,
     questions: newQuestion.value,
   };
