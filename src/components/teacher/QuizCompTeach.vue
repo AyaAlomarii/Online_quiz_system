@@ -255,43 +255,46 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="showDeleteDialog" persistent>
-      <q-card>
-        <q-card-section class="row items-center">
-          <q-avatar icon="delete_forever" color="red" text-color="white" />
-          <span class="q-ml-sm"
-            >Are you sure you want to delete this quiz?</span
-          >
-        </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="Cancel"
-            dense
-            v-close-popup
-            unelevated
-            no-caps
-            size="md"
-            class="br-8 q-mr-md q-px-md"
-            color="light-green-11"
-            text-color="light-green-14"
-          />
-          <q-btn
-            class="br-8 bg-attempt text-primary q-px-md"
-            size="md"
-            dense
-            text-color="red"
-            color="red-2"
-            no-caps
-            label="Delete"
-            unelevated
-            v-close-popup
-            @click="handelDelete"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <q-dialog class="" v-model="showDeleteDialog">
+  <q-card class="column q-pa-sm">
+    <q-card-section>
+      <div class="text-h6">Delete Quiz</div>
+    </q-card-section>
+
+    <q-card-section class="q-pt-none question-grey-text">
+      Are you sure you want to delete this quiz?
+    </q-card-section>
+
+    <q-card-actions align="right" class="q-pa-md">
+      <q-btn
+        flat
+        label="Cancel"
+        class="br-8 q-px-md bg-white"
+        outline
+        color="red"
+        size="md"
+        dense
+        no-caps
+        v-close-popup
+      />
+
+      <q-btn
+        flat
+        label="Delete"
+        @click="handleDelete"
+        outline
+        size="md"
+        dense
+        no-caps
+        class="br-8 bg-red q-pa-lg"
+        text-color="white"
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
+
   </div>
 </template>
 
@@ -320,7 +323,7 @@ const props = defineProps({
   },
 });
 
-const handelDelete = () => {
+const handleDelete = () => {
   emit('delete-quiz', { i: props.i });
 };
 
