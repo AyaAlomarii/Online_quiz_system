@@ -1,8 +1,10 @@
 <template>
   <div class="fixed-center column">
     <q-card class="br-12 width-460 q-pa-lg">
-      <q-form @submit.prevent="handelLogin" >
-        <q-card-section class="column justify-center w-242 text-black q-pb-none ">
+      <q-form @submit.prevent="handelLogin">
+        <q-card-section
+          class="column justify-center w-242 text-black q-pb-none"
+        >
           <div class="text-h6 q-my-md w-192 row justify-center">
             <q-icon
               name="star"
@@ -11,7 +13,7 @@
             />
             <span class="q-px-sm"> Online Quiz System </span>
           </div>
-          <div class="text-h5 q-mt-md  text-left">
+          <div class="text-h5 q-mt-md text-left">
             Welcome to Materialize! 👋
           </div>
           <div class="text-body1 full-width q-mt-sm text-left grey-text">
@@ -21,13 +23,14 @@
 
         <q-card-section class="column">
           <div>
+            <span v-if="errorMessage!==''" class="text-red text-body2">{{ errorMessage }}</span>
             <q-input
               v-model="email"
               label="Email"
               type="email"
               dense
               outlined
-              class=" br-8 q-mt-sm "
+              class="br-8 q-mt-sm"
             />
             <q-input
               v-model="password"
@@ -36,7 +39,6 @@
               dense
               outlined
               class="br-8 q-mt-md"
-              
             >
               <template v-slot:append>
                 <q-icon name="visibility" class="icon-icon" />
@@ -48,8 +50,7 @@
               v-model="rememberMe"
               label="Remember Me"
               dense
-              class="text-black q-py-md br-8 "
-              
+              class="text-black q-py-md br-8"
               size="sm"
             />
 
@@ -58,7 +59,7 @@
               no-caps
               label="Forgot Password?"
               color="primary"
-              class=" q-py-md"
+              class="q-py-md"
               dense
             />
           </div>
@@ -70,7 +71,7 @@
               color="primary"
               class="full-width q-mt-md br-8"
               type="submit"
-              :to="Routes.QUIZ"
+              
             />
           </div>
         </q-card-section>
@@ -91,7 +92,7 @@
 
   <!--Dialog  -->
 
-  <q-dialog  v-model="showDialog" class="br-12 hide-scrollbar  " >
+  <q-dialog v-model="showDialog" class="br-12 hide-scrollbar">
     <q-card class="br-12 width-900 q-pa-lg hide-scrollbar">
       <q-card-section class="q-pa-md">
         <q-btn
@@ -109,7 +110,7 @@
           Create Account in
           <span class="text-primary">Online Quiz System</span>
         </div>
-      
+
         <div class="text-body2 grey-text">
           Updating user details will receive a privacy audit.
         </div>
@@ -171,7 +172,7 @@
               v-close-popup
               type="reset"
               dense
-              class=" height-38 width-93 br-8 bg-white text-accent"
+              class="height-38 width-93 br-8 bg-white text-accent"
               outlined
             />
           </q-card-actions>
@@ -184,22 +185,29 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import UserModel from '../../models/UserModel';
-import Routes from 'src/router/RoutesPaths.ts'
+import Routes from 'src/router/RoutesPaths.ts';
+import { LocalStorage } from 'quasar';
+import LoginFun from 'src/functions/LoginFunc';
 const email = ref<string>();
 const password = ref<string>();
 const rememberMe = ref<boolean>(false);
 const showDialog = ref<boolean>(false);
 const teacher = ref<boolean>(false);
-
+const allUsers = ref<UserModel[]>([]);
+const currentUsers = ref<UserModel>({});
+const errorMessage = ref<string>('');
 //register variables
 const registerUsername = ref<string>();
 const registerEmail = ref<string>();
 const registerPassword = ref<string>();
 const registerConfirmPassword = ref<string>();
 const userInfoReg = ref<UserModel[]>([]);
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // import LoginFunc from '../functions/LoginFunc';
-const handelLogin = () => {
+const handelLogin = async () => {
   /*   new LoginFunc()
     .executeAsync({ email: email, password: password })
     .then((response) => {
@@ -208,6 +216,34 @@ const handelLogin = () => {
     .catch((error) => {
       console.log(error);
     }); */
+
+    const loginFunc = new LoginFun();
+allUsers.value = (await loginFunc.executeAsync()) as UserModel[];
+console.log(allUsers.value);
+
+// Find the user based on email and password
+currentUsers.value =
+  allUsers.value.find(
+    (q) => q.email === email.value && q.password === password.value
+  ) || null;
+
+console.log(currentUsers.value);
+
+
+if (currentUsers.value !== null) {
+
+  LocalStorage.set('currentUser', currentUsers.value);
+  if (currentUsers.value.role === 'student') {
+    router.push({ path: Routes.QUIZ });
+  } else if (currentUsers.value.role === 'teacher') {
+    router.push({ path: Routes.TEACHER_QUIZ });
+  }
+} else {
+  errorMessage.value='Invalid email or password.'
+  console.log('Invalid email or password.');
+  
+}
+
 };
 
 const handelRegister = () => {
@@ -216,10 +252,10 @@ const handelRegister = () => {
       username: registerUsername.value,
       email: registerEmail.value,
       password: registerPassword.value,
-      teacher: teacher.value,
+      role: teacher.value ? 'teacher' : 'student',
     });
 
-    localStorage.setItem('user', JSON.stringify(userInfoReg));
+    LocalStorage.set('users', userInfoReg.value);
     registerUsername.value = '';
     registerEmail.value = '';
     registerPassword.value = '';

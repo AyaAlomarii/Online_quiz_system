@@ -1,19 +1,15 @@
 import DataObject from 'src/models/DataObject';
-import ApiPath from 'src/util/ApiPath';
-import ApiUtil from 'src/util/ApiUtil';
 import FuncAsync from './FuncAsync';
 import LoginModel from '../models/LoginModel'
-export default class CountriesFun implements FuncAsync<DataObject, LoginModel> {
-  async executeAsync(options?: DataObject): Promise<LoginModel> {
+import { LocalStorage } from 'quasar';
+export default class LoginFun implements FuncAsync<DataObject, LoginModel> {
+  async executeAsync(data?: DataObject): Promise<LoginModel> {
     try {
-      if (!options) {
-        options = {};
+      if (!data) {
+        data = {};
       }
-      const url = ApiPath.COUNTRIES_GET; //edit this url should be in env file
-      const res = await ApiUtil.post<LoginModel>(url, {
-        ...options,
-      });
-      return Promise.resolve(res);
+const users = LocalStorage.getItem('users')
+return users
     } catch (error) {
       // Log any errors that occur during execution.
       console.error('Error - ' + JSON.stringify(error));

@@ -8,7 +8,7 @@ export default class CreateNewQuiz implements FuncAsync<DataObject, Quiz[]> {
       if (!data || !data.quizzes) {
         data.quizzes = [];
       }
-console.log(data,1);
+
 
       LocalStorage.set('quizzes', data.quizzes);
 

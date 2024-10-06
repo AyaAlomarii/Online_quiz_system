@@ -343,6 +343,7 @@ const tabsHeader = ref([
 ]);
 
 onMounted(async () => {
+  
   const quizzesTwo = new GetAllQuizzes();
   quizzes.value = (await quizzesTwo.executeAsync()) as Quiz[];
 });
