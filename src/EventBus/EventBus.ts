@@ -8,6 +8,7 @@ const eventBus = reactive<DataObject>({
   questions: [],
   score: null,
   answersObj: {},
+  quizTeacher:{}
 });
 
 export default eventBus;

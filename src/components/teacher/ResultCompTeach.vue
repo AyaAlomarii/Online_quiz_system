@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm q-pa-md">
+  <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm q-pa-md"  >
     <q-card class="br-8 q-pa-sm q-pb-lg bg-white text-black">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
@@ -9,8 +9,8 @@
             class="q-pt-md q-mr-md"
             color="red"
           />
-          <div class="column text-h6">
-            <span>
+          <div class="column text-h6" >
+            <span @click="handleResult" class="clickable" >
               {{ quiz.name }}
             </span>
 
@@ -37,11 +37,20 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
 import Quiz from '../../models/QuizModel';
-
-defineProps({
+import eventBus from 'src/EventBus/EventBus';
+import Routes from 'src/router/RoutesPaths';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const props=defineProps({
   quiz: {
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
   },
 });
+
+const handleResult=()=>{
+  eventBus.quizTeacher=props.quiz
+  router.push({ path: Routes.RESULT_TABLE });
+}
+
 </script>

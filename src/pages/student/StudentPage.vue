@@ -25,7 +25,7 @@
       <div class="row justify-between q-px-md">
         <div class="row items-center">
           <q-icon name="search" color="accent" size="sm" class="q-mr-md" />
-          <q-input v-model="search" borderless label="Search" dense />
+          <q-input v-model="search" borderless label="Search" dense  />
         </div>
         <q-btn
           color="primary"
@@ -445,9 +445,9 @@ const filterByDateBtn=()=>{
   quizzes.value=sortedByDate.value
   console.log(sortedByDate.value);
 
-} 
- 
- 
+}
+
+
  !
  const filtered = computed<Quiz[]>(() => {
   const arr = quizzes.value.filter((element: Quiz) =>
@@ -465,6 +465,6 @@ const sortedByDate = computed<Quiz[]>(() => {
   );
 });
 
- 
+
  */
 </script>

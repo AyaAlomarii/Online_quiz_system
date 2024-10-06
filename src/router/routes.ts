@@ -59,7 +59,13 @@ const routes: RouteRecordRaw[] = [
               import('src/components/teacher/ResultCompTeach.vue')
           },
         ],
+
+
       },
+      {
+        path: RoutesPaths.RESULT_TABLE,
+        component: () => import('src/pages/teacher/ResultTable.vue'),
+      }
     ],
   },
 
