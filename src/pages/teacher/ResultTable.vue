@@ -54,12 +54,12 @@ const resultVariable= computed(() => {
 const columns = ref<TableColumn[]>([
   {
     name: 'name',
-    label: 'Student Name',
+    label: 'NAME',
     field: 'name',
     align: 'left',
-    style: 'width:80px',
+    style: 'width:250px',
   },
-  { name: 'grade', label: 'Grade', field: 'grade', align: 'left',style: 'width:200px', },
+  { name: 'grade', label: 'GRADE', field: 'grade', align: 'left',style: '', },
 ]);
 const rows = ref([
   { name: 'Laila Ali Al-Ali', grade: '30/50' },
