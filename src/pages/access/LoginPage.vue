@@ -71,7 +71,7 @@
               color="primary"
               class="full-width q-mt-md br-8"
               type="submit"
-              
+
             />
           </div>
         </q-card-section>
@@ -184,8 +184,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import UserModel from '../../models/UserModel';
-import Routes from 'src/router/RoutesPaths.ts';
+import UserModel from 'src/models/UserModel';
+import Routes from 'src/router/RoutesPaths';
 import { LocalStorage } from 'quasar';
 import LoginFun from 'src/functions/LoginFunc';
 const email = ref<string>();
@@ -194,7 +194,7 @@ const rememberMe = ref<boolean>(false);
 const showDialog = ref<boolean>(false);
 const teacher = ref<boolean>(false);
 const allUsers = ref<UserModel[]>([]);
-const currentUsers = ref<UserModel>({});
+const currentUsers = ref<UserModel>();
 const errorMessage = ref<string>('');
 //register variables
 const registerUsername = ref<string>();
@@ -241,7 +241,7 @@ if (currentUsers.value !== null) {
 } else {
   errorMessage.value='Invalid email or password.'
   console.log('Invalid email or password.');
-  
+
 }
 
 };
