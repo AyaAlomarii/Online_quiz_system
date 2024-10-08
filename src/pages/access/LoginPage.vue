@@ -201,7 +201,7 @@ const registerUsername = ref<string>();
 const registerEmail = ref<string>();
 const registerPassword = ref<string>();
 const registerConfirmPassword = ref<string>();
-const userInfoReg = ref<UserModel[]>([]);
+const userInfoReg = ref<UserModel[]>(LocalStorage.getItem('users') || []);
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

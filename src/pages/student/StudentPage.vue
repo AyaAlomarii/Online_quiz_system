@@ -48,7 +48,7 @@
       >
         <q-tab-panel name="quiz" class="q-pa-none">
           <div class="row">
-            <quiz-comp v-for="(quiz, i) in filtered" :key="i" :quiz="quiz" />
+            <quiz-comp v-for="(quiz, i) in filtered" :key="i" :quiz="quiz" :i="i" />
           </div>
         </q-tab-panel>
         <q-tab-panel name="result" class="q-pa-none">
@@ -67,6 +67,10 @@ import { computed, ref } from 'vue';
 import QuizComp from 'src/components/student/QuizComp.vue';
 import ResultComp from 'src/components/student/ResultComp.vue';
 import Quiz from '../../models/QuizModel';
+import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
+import { onMounted } from 'vue';
+
+const quizzes = ref<Quiz[]>([]);
 
 //variables
 const tab = ref<string>('quiz');
@@ -86,8 +90,13 @@ const tabsHeader = ref([
   },
 ]);
 //variables
+onMounted(async () => {
 
-const quizzes = ref<Quiz[]>( [{
+  const quizzesTwo = new GetAllQuizzes();
+  quizzes.value = (await quizzesTwo.executeAsync()) as Quiz[];
+});
+
+/* const quizzes = ref<Quiz[]>( [{
     id: 1,
     date: '09/09/2024',
     description: 'This quiz covers Arabic language basics.',
@@ -184,7 +193,7 @@ const quizzes = ref<Quiz[]>( [{
     ],
   },
 ]);
-
+ */
 const filtered = computed<Quiz[]>(() => {
   return quizzes.value.filter((element) =>
     element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())

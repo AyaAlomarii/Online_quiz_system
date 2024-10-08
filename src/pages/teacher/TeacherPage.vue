@@ -141,7 +141,7 @@
                         transition-show="scale"
                         transition-hide="scale"
                       >
-                        <q-time v-model="time" mask="HH:mm" format24h>
+                        <q-time v-model="time" mask="hh:mmA" format12h>
                           <div class="row items-center justify-end">
                             <q-btn
                               v-close-popup
@@ -301,6 +301,7 @@ import DataObject from '@/models/DataObject';
 import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
 import DeleteQuizFunc from 'src/functions/DeleteQuizFunc';
 import UpdateQuiz from 'src/functions/UpdateQuizFun';
+ import { date as quasarDate } from 'quasar'; // Import Quasar date utility
 //variables
 const search = ref<string>('');
 const showCreateDialog = ref<boolean>(false);
@@ -343,7 +344,6 @@ const tabsHeader = ref([
 ]);
 
 onMounted(async () => {
-  
   const quizzesTwo = new GetAllQuizzes();
   quizzes.value = (await quizzesTwo.executeAsync()) as Quiz[];
 });
@@ -400,8 +400,30 @@ const sumAllPoints = () => {
   console.log(typeof totalPoints.value, totalPoints.value);
 };
 
+const calculateEndTime = (startTime: string) => {
+  const fullDateTimeString = `${date.value} ${startTime}`;
+  const startDateTime = quasarDate.extractDate(
+    fullDateTimeString,
+    'YYYY-MM-DD hh:mmA'
+  );
+
+  // Check if startDateTime is correctly parsed
+  if (!startDateTime) {
+    console.error('Date parsing failed for:', fullDateTimeString);
+    return 'Error in parsing date';
+  }
+
+  const end = new Date(startDateTime.getTime() + 45 * 60 * 1000); // Add 45 minutes
+  return end.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
 const handelSubmitNewQuiz = async () => {
   sumAllPoints();
+  const endPoint = calculateEndTime(time.value);
 
   quizzesLocal.value = {
     id: 0,
@@ -412,7 +434,7 @@ const handelSubmitNewQuiz = async () => {
     points: totalPoints.value,
     students: 0,
     start: time.value,
-    end: time.value,
+    end: endPoint,
     status: 'active',
     totalQuestion: newQuestion.value.length,
     questions: newQuestion.value,

@@ -33,8 +33,8 @@
             class="br-8 bg-attempt text-primary"
             size="md"
             no-caps
-            :disable="quiz.status === 'active' ? true : false"
-            @click="handelAttempt(quiz.id, quiz)"
+            :disable="quiz.status === 'active' ? false : true"
+            @click="handelAttempt(i, quiz)"
             >Attempt</q-btn
           >
         </div>
@@ -55,10 +55,14 @@ defineProps({
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
   },
+  i: {
+    type: Number,
+    required:true
+  },
 });
 
-const handelAttempt = (id: number | null, quiz: Quiz) => {
-  router.push({ path: RoutesPaths.QUESTIONS, query: { id: id } });
+const handelAttempt = (i: number | null, quiz: Quiz) => {
+  router.push({ path: RoutesPaths.QUESTIONS, query: { i: i } });
   EventBus.quizVar = quiz;
 };
 </script>

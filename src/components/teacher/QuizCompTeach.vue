@@ -384,6 +384,7 @@ const handelSubmitUpdatedQuiz = async () => {
     points: totalPoints.value,
     students: props.quiz.points,
     start: time.value,
+    
     end: time.value,
     status: props.quiz.status,
     totalQuestion: newQuestion.value.length,

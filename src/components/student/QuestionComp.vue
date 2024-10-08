@@ -1,6 +1,7 @@
 <template>
   <div class="row q-pa-sm justify-center height-271">
     <div class="col-lg-11 col-xlg-11 col-md-8 col-sm-10 q-pa-none">
+      {{ currentUser }}
       <div class="row justify-end text-h5 end-text">{{ timer }} min</div>
       <q-stepper
         v-model="step"
@@ -15,7 +16,7 @@
           v-for="(qes, i) in props.quiz.questions"
           :key="i"
           :name="i"
-          :title="`q-${qes.question}`"
+          :title="`q-${i}`"
           icon="settings"
           :done="step > 1"
         >
@@ -27,14 +28,16 @@
                 class="q-pr-sm"
                 color="yellow"
               />
-              Question {{ qes.question }}
+              Question {{ i + 1 }}
             </div>
 
-            <span class="text-body2 question-grey-text">5 points</span>
+            <span class="text-body2 question-grey-text"
+              >{{ qes.point }} point</span
+            >
           </div>
           <div class="column question-grey-text text-body2">
             <span class="q-pb-md">
-              {{ qes.text }}
+              {{ qes.question }}
             </span>
             <div
               v-for="(ans, index) in qes.options"
@@ -42,9 +45,9 @@
               class="column q-py-xs"
             >
               <q-radio
-                v-model="allAnswers[qes.question]"
+                v-model="allAnswers[i]"
                 :val="ans"
-                :label="ans"
+                :label="ans.text"
                 color="primary"
                 keep-color
                 dense
@@ -115,8 +118,8 @@
             no-caps
             class="br-8 bg-red q-pa-lg"
             text-color="white"
-            :to="RoutesPaths.RESULT_PAGE"
           />
+          <!--  -->
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -128,12 +131,32 @@ import { ref, PropType, onBeforeUnmount } from 'vue';
 import { Quiz } from 'src/models/QuizModel';
 import DataObject from 'src/models/DataObject';
 import RoutesPaths from 'src/router/RoutesPaths';
-import eventBus from 'src/EventBus/EventBus';
+// import eventBus from 'src/EventBus/EventBus';
+import UserModel from '@/models/UserModel';
+import { LocalStorage } from 'quasar';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
 const allAnswers = ref<DataObject>({});
 const step = ref<number>(0);
 const alert = ref<boolean>(false);
 const score = ref<number>(0);
+// const usersInfoQuiz = ref<userQuiz[]>(
+//   LocalStorage.getItem('usersQuizzes') || []
+// );
+// const newUsersQuiz = ref<newQuiz[]>([]);
+const quizInfoByEmail = ref<DataObject>(
+  LocalStorage.getItem('quizInfoByEmail') || {}
+);
+const currentUser = ref<UserModel>(LocalStorage.getItem('currentUser'));
 
+/* 
+the idea
+{email:[{
+
+
+}]}
+*/
 const props = defineProps({
   quiz: {
     type: Object as PropType<Quiz>,
@@ -142,17 +165,29 @@ const props = defineProps({
 });
 
 //functions
+// Functions
 const handelScore = () => {
-  //for loop
-  props.quiz?.questions?.forEach((ele) => {
-    if (ele.correctAnswer === allAnswers.value[ele.question]) {
-      console.log(ele.correctAnswer, allAnswers.value[ele.question], 'right');
+  score.value = 0; // Initialize score to 0
 
-      score.value += 10;
+  // Loop through each question
+  props.quiz?.questions?.forEach((ele, questionIndex) => {
+    const selectedAnswer = allAnswers.value[questionIndex]; // Get selected answer object for this question
+
+    if (selectedAnswer) {
+      ele.options.forEach((op) => {
+        // Check if the selected answer's text matches the correct option
+        if (op.correct && op.text === selectedAnswer.text) {
+          console.log(op.correct, selectedAnswer.text, 'right');
+          score.value += ele.point; // Add points for correct answer
+        } else {
+          console.log(op.correct, selectedAnswer.text, 'wrong');
+        }
+      });
     } else {
-      console.log(ele.correctAnswer, allAnswers.value[ele.question], 'wrong');
+      console.log('No answer selected for question', questionIndex);
     }
-    console.log(score.value, '/30');
+
+    console.log(score.value, `/${props.quiz.points}`);
   });
 };
 
@@ -172,14 +207,53 @@ const previousQuestion = () => {
   step.value--;
 };
 
+// Submit the quiz and save data
 const handelSubmit = () => {
-  //calculate score
+  // Calculate score
   handelScore();
-  //event bus variables
-  eventBus.quiz = props.quiz;
-  eventBus.questions = props.quiz.questions;
-  eventBus.score = score.value;
-  eventBus.answersObj = allAnswers.value;
+
+  // Prepare new quiz entry
+  //quiz:[]
+  interface newQuiz {
+    quiz: Quiz;
+    score: number;
+    answersObj:DataObject;
+  };
+  interface infoQuiz{
+    user:UserModel,
+    quizzes:newQuiz[]
+  }
+  const newQuizEntry :newQuiz= {
+    quiz: props.quiz,
+    score: score.value,
+    answersObj: allAnswers.value,
+  };
+  
+
+  // Check if the user has already taken this quiz
+  const userEmail = currentUser.value.email;
+  const userQuizzes = quizInfoByEmail.value[userEmail]?.quizzes || [];
+
+  const hasTakenQuiz = userQuizzes.some(
+    (entry: any) => entry.quiz.name === props.quiz.name
+  );
+
+  if (!hasTakenQuiz) {
+    userQuizzes.push(newQuizEntry); // Add new quiz entry if not taken
+    quizInfoByEmail.value[userEmail] = {
+      user:currentUser.value,
+      quizzes:userQuizzes
+    } as infoQuiz 
+    
+    LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value); // Save to local storage
+    console.log('Quiz submitted:', quizInfoByEmail.value);
+    router.push({
+      path: RoutesPaths.RESULT_PAGE,
+      query: { quizName: props.quiz.name },
+    });
+  } else {
+    console.log('This quiz has already been taken by the user.');
+  }
 };
 
 //timer
