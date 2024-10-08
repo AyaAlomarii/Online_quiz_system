@@ -150,13 +150,7 @@ const quizInfoByEmail = ref<DataObject>(
 );
 const currentUser = ref<UserModel>(LocalStorage.getItem('currentUser'));
 
-/* 
-the idea
-{email:[{
 
-
-}]}
-*/
 const props = defineProps({
   quiz: {
     type: Object as PropType<Quiz>,

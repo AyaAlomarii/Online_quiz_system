@@ -50,7 +50,7 @@ const props=defineProps({
 
 const handleResult=()=>{
   eventBus.quizTeacher=props.quiz
-  router.push({ path: Routes.RESULT_TABLE });
+  router.push({ path: Routes.RESULT_TABLE ,query:{quizName:props.quiz?.name}});
 }
 
 </script>
