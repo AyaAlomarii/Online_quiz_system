@@ -13,16 +13,12 @@
             {{ route.query.quizName }}
           </span>
 
-          <span class="text-body2 text-grey">
-            {{ currentQuiz?.date }}</span
-          >
+          <span class="text-body2 text-grey"> {{ currentQuiz?.date }}</span>
         </div>
       </div>
 
       <div class="q-pt-sm column text-body2">
-        <span class="start-text">
-          Start: {{ currentQuiz?.start }}</span
-        >
+        <span class="start-text"> Start: {{ currentQuiz?.start }}</span>
         <span class="end-text"> End: {{ currentQuiz?.end }}</span>
       </div>
     </div>
@@ -32,15 +28,17 @@
     </div>
     <div class="">
       <q-table
-  :rows="filtered"
-  row-key="name"
-  :columns="columns"
-  bordered
-  hide-bottom
-  table-header-class="bg-bg-grey"
-@row-click="handleRowClick"
-/>
-  
+        :rows="filtered"
+        row-key="name"
+        :columns="columns"
+        bordered
+        hide-bottom
+        table-header-class="bg-bg-grey"
+        @row-click="handleRowClick"
+        v-model="selected"
+      />
+    
+
     </div>
   </div>
 </template>
@@ -50,24 +48,24 @@
 import { computed, onMounted, ref } from 'vue';
 import TableColumn from 'src/models/TableColumn';
 import DataObject from '@/models/DataObject';
-import { LocalStorage } from 'quasar';
+
 import { useRoute } from 'vue-router';
 import UserModel from '@/models/UserModel';
 import { Quiz } from '@/models/QuizModel';
 import { useRouter } from 'vue-router';
+import RoutesPaths from 'src/router/RoutesPaths';
+import GetAllStudentQuizzes from 'src/functions/GetAllStudentQuizzes'
 //variables
 const search = ref<string>('');
-const quizByEmail = ref<DataObject>(
-  LocalStorage.getItem('quizInfoByEmail') || {}
-);
+const selected = ref<any>(null);
+
+const quizByEmail = ref<DataObject>({});
 const rowsName = ref<{ name: string; grade: string }[]>([]);
-const quizByNames = ref<{user:UserModel,quiz:DataObject}[]>([]);
+const quizByNames = ref<{ user: UserModel; quiz: DataObject }[]>([]);
 const currentQuiz = ref<Quiz>();
 
 const route = useRoute();
-
-
-
+const router = useRouter();
 
 const columns = ref<TableColumn[]>([
   {
@@ -80,49 +78,52 @@ const columns = ref<TableColumn[]>([
   { name: 'grade', label: 'GRADE', field: 'grade', align: 'left', style: '' },
 ]);
 
-
 const filtered = computed(() => {
-  return (rowsName.value && Array.isArray(rowsName.value) ? rowsName.value : []).filter(
-    (element) =>
-      element.name
-        .toLocaleLowerCase()
-        .includes(search.value.toLocaleLowerCase())
+  return (
+    rowsName.value && Array.isArray(rowsName.value) ? rowsName.value : []
+  ).filter((element) =>
+    element.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
   );
 });
 
-onMounted(() => {
+onMounted(async() => {
+  const getAllStudentQuizzes=new GetAllStudentQuizzes()
+  quizByEmail.value= await getAllStudentQuizzes.executeAsync()
+  console.log(getAllStudentQuizzes.executeAsync(),11);
+
   for (let email in quizByEmail.value) {
     if (quizByEmail.value.hasOwnProperty(email)) {
       // Loop through each quiz for this user
       quizByEmail.value[email].quizzes.forEach((quiz) => {
         if (quiz.quiz?.name === route.query.quizName) {
-        
-          currentQuiz.value=quiz.quiz
-           rowsName.value.push({name: quizByEmail.value[email].user.username,grade:quiz?.score} )
-           
-           quizByNames.value.push({
+          currentQuiz.value = quiz.quiz;
+          rowsName.value.push({
+            name: quizByEmail.value[email].user.username,
+            grade: quiz?.score,
+          });
+
+          quizByNames.value.push({
             user: quizByEmail.value[email].user,
-            quiz:quiz
-           })
-           
+            quiz: quiz,
+          });
         }
       });
-      
-      
     }
-
   }
   console.log(quizByNames.value);
-  
 });
-const handleRowClick = () => {
-  const router = useRouter();
-/* router.push({
-      path: RoutesPaths.RESULT_PAGE,
-      query: { quizName: props.quiz.name },
-    }); */
- 
+// Handle row click and assign selected row
+const handleRowClick = (event, row) => {
+  selected.value = row;
+
+
+
+  router.push({
+    path: RoutesPaths.RESULT_STUDENT_INFO,
+    query: { quizName: route.query.quizName, username: row.name }
+  });
+
+
+  console.log('Selected Row:', selected.value); // Debug the selected row data
 };
-//first loop through the object //check the name of quiz
-//save names and quiz in array object
 </script>

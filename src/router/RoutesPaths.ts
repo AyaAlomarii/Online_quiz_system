@@ -22,7 +22,10 @@ export default class Routes {
   public static readonly TEACHER_QUIZ= '/teacher/quiz';
   public static readonly TEACHER_RESULT= '/teacher/result';
 
-  public static readonly RESULT_TABLE= '/teacher/quiz/result';
+  public static readonly RESULT_TABLE= '/teacher/result/table';
+
+  public static readonly RESULT_STUDENT_INFO= '/teacher/result/student';
+
 
 
 

@@ -11,7 +11,7 @@
           <q-img src="/teacher/avatar.svg" class="width-120 height-120" />
         </q-avatar>
         <div class="col column">
-          <div class="text-h6">{{ userInfo?.username || 'Unknown User' }}</div>
+          <div class="text-h6">{{ userInfo?.role || 'Unknown User' }}</div>
 
           <div class="row justify-start items-center q-py-sm grey-text">
             <div class="text-body-1 text-weight-500">

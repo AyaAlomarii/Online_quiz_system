@@ -65,6 +65,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: RoutesPaths.RESULT_TABLE,
         component: () => import('src/pages/teacher/ResultTable.vue'),
+      } ,
+       {
+        path: RoutesPaths.RESULT_STUDENT_INFO,
+        component: () => import('src/pages/teacher/ResultStudentDetails.vue'),
       }
     ],
   },

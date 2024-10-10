@@ -1,5 +1,5 @@
 <template>
-  <div v-if="quiz" class="justify-center q-ma-md q-pa-none">
+  <div class="justify-center q-ma-md q-pa-none">
     <q-card flat bordered class="br-8 q-pa-none">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
@@ -11,39 +11,38 @@
           />
           <div class="column text-h6">
             <span>
-              {{quiz.quiz?.name }}
+              {{ route.query.quizName }}
             </span>
-
             <span class="text-body2 text-grey">
-              {{ quiz.quiz?.date }}</span
+              {{ quizInfo?.quiz.date }}</span
             >
+            <span class="text-body2 text-grey"> </span>
             <div>
-              <span class="text-red">{{ quiz?.score }}</span
-              >/{{ quiz.quiz?.points }}
+              {{ route.query.username }}
+              <span class="text-red">{{ quizInfo?.score }}</span>/{{ quizInfo?.quiz?.points }}
             </div>
           </div>
         </div>
 
         <div class="q-pt-sm q-py-none column text-body2">
-          <span class="start-text"
-            >Start: {{ quiz.quiz?.start }}</span
-          >
-          <span class="end-text"> End: {{ quiz.quiz?.end }}</span>
+          <span class="start-text">Start: {{ quizInfo?.quiz.start }}</span>
+          <span class="end-text"> End: {{ quizInfo?.quiz.end }}</span>
         </div>
       </q-card-section>
 
       <q-card-section class="">
         <q-card
-          v-for="(qes, i) in quiz.quiz?.questions"
+          v-for="(qes, i) in quizInfo?.quiz?.questions"
           :key="i"
           flat
           bordered
           :class="
-            quiz?.answersObj[i]?.correct
+            quizInfo?.answersObj[i].correct
               ? 'q-ma-md br-correct'
               : 'q-ma-md br-error'
           "
         >
+
 
           <q-card-section class="q-pb-none">
             <div class="row justify-between items-center">
@@ -66,13 +65,11 @@
                 {{ qes.question }}
               </div>
 
-              <div
-                v-for="(ans, index) in qes?.options"
+              <div   v-for="(ans, index) in qes?.options"
                 :key="index"
-                class="column q-py-xs"
-              >
+                class="column q-py-xs" >
                 <q-radio
-                  v-model="quiz.answersObj[i].text"
+                  v-model="quizInfo.answersObj[i].text"
                   :val="ans.text"
                   :label="ans.text"
                   color="primary"
@@ -83,11 +80,10 @@
                     'text-green': ans.correct ,
 
                     'text-red':
-                      quiz?.answersObj[i]?.text === ans?.text &&
-                      !ans?.correct ,
+                      quizInfo?.answersObj[i].text === ans.text &&
+                      !ans.correct ,
                   }"
                 />
-
               </div>
             </div>
           </q-card-section>
@@ -101,56 +97,60 @@
         dense
         label="Close"
         class="q-px-md"
-        :to="Routes.QUIZ"
         text-color="red"
         color="red-2"
+        :to="Routes.TEACHER_RESULT"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-//! remember that i used qes.question not the index
-// import eventBus from 'src/EventBus/EventBus';
-import {  onMounted, ref } from 'vue';
-import Routes from 'src/router/RoutesPaths';
-import { Quiz } from '@/models/QuizModel';
 import DataObject from '@/models/DataObject';
-import { LocalStorage } from 'quasar';
-import UserModel from '@/models/UserModel';
-// import { route } from 'quasar/wrappers';
+import { Quiz } from '@/models/QuizModel';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import GetAllStudentQuizzes from 'src/functions/GetAllStudentQuizzes';
+import Routes from 'src/router/RoutesPaths';
+
+//variables
+const quizByEmail = ref<DataObject>({});
+  interface newQuiz {
+  quiz: Quiz;
+  score: number;
+  answersObj: DataObject;
+}
+const quizInfo = ref<newQuiz>();
+
 const route = useRoute();
 
-interface QuizData{
-  quiz:Quiz;
-  score:number;
-  answersObj:DataObject
 
-}
-//variables
-const userQuizzes=ref<QuizData[]>([])
-  const userQuizzesObj=ref<DataObject>(LocalStorage.getItem('quizInfoByEmail')||{})
 
-const user=ref<UserModel>(LocalStorage.getItem('currentUser'))
-const quiz=ref<DataObject>({})
+onMounted(async () => {
+  const getAllStudentQuizzes = new GetAllStudentQuizzes();
+  quizByEmail.value = await getAllStudentQuizzes.executeAsync();
+  console.log(quizByEmail.value);
+  for (let email in quizByEmail.value) {
+    if (quizByEmail.value.hasOwnProperty(email)) {
+      // Loop through each quiz for this user
+      console.log(
+        quizByEmail.value[email]?.user.username === route.query.username
+      );
 
-/* const resultVariables = computed(() => {
-  return {
-    quiz: eventBus.quiz,
-    questions: eventBus.questions,
-    score: eventBus.score,
-    // answersObj: eventBus.answersObj,
-  };
-}); */
-onMounted(()=>{
-  userQuizzes.value=userQuizzesObj.value[`${user.value.email}`].quizzes
-  console.log(userQuizzes.value,123);
-    const quizName = route.query.quizName as string;
-
-   quiz.value=userQuizzes.value.find((q) => q.quiz.name  === quizName) || null;
-   console.log(quiz.value,1);
-
-})
-
+      quizByEmail.value[email].quizzes.forEach(
+        (quiz) => {
+          if (
+            quiz.quiz?.name === route.query.quizName &&
+            quizByEmail.value[email]?.user.username === route.query.username
+          ) {
+            quizInfo.value = quiz as newQuiz
+            console.log(quizInfo.value);
+          }else{
+            console.log('no data')
+          }
+        }
+      ) || null;
+    }
+  }
+});
 </script>
