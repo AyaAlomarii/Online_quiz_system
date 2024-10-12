@@ -2,6 +2,7 @@ import DataObject from 'src/models/DataObject';
 import FuncAsync from './FuncAsync';
 import { Quiz } from 'src/models/QuizModel';
 import { LocalStorage } from 'quasar';
+
 export default class CreateNewQuiz implements FuncAsync<DataObject, Quiz[]> {
   async executeAsync(data: DataObject): Promise<Quiz[]> {
     try {

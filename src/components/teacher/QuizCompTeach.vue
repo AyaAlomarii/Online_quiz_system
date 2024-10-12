@@ -25,7 +25,7 @@
       </q-card-section>
 
       <q-card-section class="column text-body2 text-grey q-py-none">
-        <span>{{ quiz.teacher }}teacher</span>
+        <span>{{ quiz.teacher }} teacher</span>
         <span>{{ quiz.points }} Point</span>
         <span> {{ quiz.students }} Student</span>
         <div class="row justify-end q-gutter-md">
@@ -56,7 +56,8 @@
 
     <!-- dialog -->
     <q-dialog v-model="showEditDialog" class="row">
-      <q-card class="br-12 q-pa-lg width-900 hide-scrollbar">
+      <q-card class="br-12 q-pa-lg width-900 ">
+        <!-- hide-scrollbar -->
         <q-card-section class="col-12 q-pa-md">
           <q-btn
             flat
@@ -78,58 +79,58 @@
             @reset="resetOnCancel"
             class="q-gutter-md col-12"
           >
-            <div class="">
-              <q-input
-                v-model="dateTime"
-                dense
-                label="Date"
-                class="q-px-sm br-8 bg-white"
-                outlined
-              >
-                <template v-slot:prepend>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="date" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Close"
-                            color="primary"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
+          <div class="">
+                <q-input
+                  v-model="dateTime"
+                  dense
+                  label="Date"
+                  class="q-px-sm br-8 bg-white"
+                  outlined
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-date v-model="date" mask="YYYY-MM-DD">
+                          <div class="row items-center justify-end">
+                            <q-btn
+                              v-close-popup
+                              label="Close"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
 
-                <template v-slot:append>
-                  <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-time v-model="time" mask="HH:mm" format24h>
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Close"
-                            color="primary"
-                            flat
-                          />
-                        </div>
-                      </q-time>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-              <!--  {{ date }}/{{time}}/{{dateTime}} -->
-            </div>
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy
+                        cover
+                        transition-show="scale"
+                        transition-hide="scale"
+                      >
+                        <q-time v-model="time" mask="hh:mmA" format12h>
+                          <div class="row items-center justify-end">
+                            <q-btn
+                              v-close-popup
+                              label="Close"
+                              color="primary"
+                              flat
+                            />
+                          </div>
+                        </q-time>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <!--  {{ date }}/{{time}}/{{dateTime}} -->
+              </div>
 
             <q-input
               v-model="quizName"
@@ -301,8 +302,8 @@
 <script setup lang="ts">
 import { computed, PropType, ref } from 'vue';
 import { Question, Quiz } from '@/models/QuizModel';
-// import CreateNewQuiz from 'src/functions/CreateNewQuizFunc';
-// import DataObject from '@/models/DataObject';
+import {  date as quasarDate } from 'quasar'; // Import Quasar date utility
+
 
 //variables
 const showEditDialog = ref<boolean>(false);
@@ -371,9 +372,23 @@ const sumAllPoints = () => {
   });
   console.log(typeof totalPoints.value, totalPoints.value);
 };
+const calculateEndTime = (startTime: string) => {
+  const fullDateTimeString = `${date.value} ${startTime}`;
+  const startDateTime = quasarDate.extractDate(
+    fullDateTimeString,
+    'YYYY-MM-DD hh:mmA'
+  );
+
+  // Check if startDateTime is correctly parsed
+  if (!startDateTime) {
+    console.error('Date parsing failed for:', fullDateTimeString);
+    return 'Error in parsing date';
+  }
+}
 
 const handelSubmitUpdatedQuiz = async () => {
   sumAllPoints();
+  const endPoint = calculateEndTime(time.value);
 
   updatedQuiz.value = {
     id: props.quiz.id,
@@ -384,8 +399,7 @@ const handelSubmitUpdatedQuiz = async () => {
     points: totalPoints.value,
     students: props.quiz.points,
     start: time.value,
-    
-    end: time.value,
+    end: endPoint,
     status: props.quiz.status,
     totalQuestion: newQuestion.value.length,
     questions: newQuestion.value,

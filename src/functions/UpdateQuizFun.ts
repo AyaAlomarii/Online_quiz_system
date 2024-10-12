@@ -3,15 +3,18 @@ import DataObject from 'src/models/DataObject';
 import FuncAsync from './FuncAsync';
 import { Quiz } from 'src/models/QuizModel';
 import { LocalStorage } from 'quasar';
-export default class UpdateQuiz implements FuncAsync<DataObject, Quiz[]> {
-  async executeAsync(data: DataObject): Promise<Quiz[]> {
+export default class UpdateQuiz implements FuncAsync<DataObject, Quiz> {
+  async executeAsync(data: DataObject): Promise<Quiz> {
     try {
-      if (!data || !data.quizzes) {
-        data.quizzes = [];
+      if (!data || !data.quiz && data.i) {
+        data.quiz = {};
+        data.i=null
       }
 console.log(data,1);
+const allQuiz:Quiz[]=LocalStorage.getItem('quizzes') ||[]
+allQuiz.splice(data.i, 1, data.quiz);
 
-      LocalStorage.set('quizzes', data.quizzes);
+      LocalStorage.set('quizzes',allQuiz);
 
       // return Promise.resolve(res);
     } catch (error) {

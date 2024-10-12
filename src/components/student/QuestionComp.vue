@@ -1,6 +1,7 @@
 <template>
   <div class="row q-pa-sm justify-center height-271">
     <div class="col-lg-11 col-xlg-11 col-md-8 col-sm-10 q-pa-none">
+
       <div class="row justify-end text-h5 end-text">{{ timer }} min</div>
       <q-stepper
         v-model="step"
@@ -118,8 +119,10 @@
             class="br-8 bg-red q-pa-lg"
             text-color="white"
           />
+
           <!--  -->
         </q-card-actions>
+
       </q-card>
     </q-dialog>
   </div>
@@ -134,6 +137,7 @@ import RoutesPaths from 'src/router/RoutesPaths';
 import UserModel from '@/models/UserModel';
 import { LocalStorage } from 'quasar';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar'
 const router = useRouter();
 
 const allAnswers = ref<DataObject>({});
@@ -289,7 +293,8 @@ if(time.value>0){
   LocalStorage.removeItem('time')
   LocalStorage.removeItem('timer')
   console.log('time is up',time.value,time.value/60,time.value%60);
-
+  showNotify()
+  handelSubmit()
 
 }
 
@@ -299,6 +304,20 @@ onBeforeUnmount(() => {
   clearInterval(instance);
 });
 
+
+
+const $q = useQuasar()
+
+const showNotify = () => {
+  $q.notify({
+    message: 'The exam has ended.',
+    caption: 'Your time is up!',
+    icon: 'alarm',
+    color: 'red',
+    position: 'top',
+    timeout: 5000, // Show for 5 seconds
+  });
+};
 // Watch the timerValue ref
 /* watch(timer, (newVal, oldVal) => {
   onTimerChange();

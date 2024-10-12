@@ -80,7 +80,8 @@
 
       <!-- Dialog -->
       <q-dialog v-model="showCreateDialog" class="row">
-        <q-card class="br-12 q-pa-lg width-900 hide-scrollbar">
+        <q-card class="br-12 q-pa-lg width-900 ">
+          <!-- hide-scrollbar -->
           <q-card-section class="col-12 q-pa-md">
             <q-btn
               flat
@@ -301,12 +302,13 @@ import DataObject from '@/models/DataObject';
 import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
 import DeleteQuizFunc from 'src/functions/DeleteQuizFunc';
 import UpdateQuiz from 'src/functions/UpdateQuizFun';
- import { date as quasarDate } from 'quasar'; // Import Quasar date utility
+ import { LocalStorage, date as quasarDate } from 'quasar'; // Import Quasar date utility
 //variables
 const search = ref<string>('');
 const showCreateDialog = ref<boolean>(false);
 const date = ref<string>('');
 const time = ref<string>('');
+const teacher=ref<string>(LocalStorage.getItem('currentUser') || '')
 
 const quizName = ref<string>('');
 const quizDescription = ref<string>('');
@@ -430,7 +432,7 @@ const handelSubmitNewQuiz = async () => {
     date: date.value,
     description: quizDescription.value,
     name: quizName.value,
-    teacher: '',
+    teacher: teacher.value?.username || '' ,
     points: totalPoints.value,
     students: 0,
     start: time.value,
@@ -497,7 +499,7 @@ const handelUpdate = async (payload: { i: number; quiz: Quiz }) => {
   console.log(payload.quiz, payload.i);
 
   const updateQuiz = new UpdateQuiz();
-  await updateQuiz.executeAsync({ quizzes: quizzes.value });
+  await updateQuiz.executeAsync({ quiz: payload.quiz,i:payload.i});
 };
 
 /*  const sortedByDate = computed<Quiz[]>(() => {

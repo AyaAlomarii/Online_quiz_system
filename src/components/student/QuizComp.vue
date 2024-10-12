@@ -34,7 +34,7 @@
             size="md"
             no-caps
             :disable="quiz.status === 'active' ? false : true"
-            @click="handelAttempt(i, quiz)"
+            @click="()=>handelAttempt(quiz.name)"
             >Attempt</q-btn
           >
         </div>
@@ -48,7 +48,6 @@ import { PropType } from 'vue';
 import { useRouter } from 'vue-router';
 import Quiz from '../../models/QuizModel';
 import RoutesPaths from 'src/router/RoutesPaths';
-import EventBus from 'src/EventBus/EventBus';
 const router = useRouter();
 defineProps({
   quiz: {
@@ -61,8 +60,8 @@ defineProps({
   },
 });
 
-const handelAttempt = (i: number | null, quiz: Quiz) => {
-  router.push({ path: RoutesPaths.QUESTIONS, query: { i: i } });
-  EventBus.quizVar = quiz;
+const handelAttempt = (quizName: string ) => {
+  router.push({ path: RoutesPaths.QUESTIONS, query: { quizName: quizName } });
+ 
 };
 </script>
