@@ -179,10 +179,16 @@ body {
     min-width: 900px !important; /* Adjust according to your design */
   }
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 920px) {
   .width-900 {
     width: 90% !important; /* Or another percentage that fits your design */
-    max-width: 500px !important; /* Optional, if you still want to limit the width */
+    min-width: 700px !important; /* Optional, if you still want to limit the width */
+  }
+}
+@media screen and (max-width: 600px) {
+  .width-900 {
+    width: 70% !important; /* Or another percentage that fits your design */
+    min-width: 500px !important; /* Optional, if you still want to limit the width */
   }
 }
 
