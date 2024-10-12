@@ -1,7 +1,6 @@
 <template>
   <div class="row q-pa-sm justify-center height-271">
     <div class="col-lg-11 col-xlg-11 col-md-8 col-sm-10 q-pa-none">
-
       <div class="row justify-end text-h5 end-text">{{ timer }} min</div>
       <q-stepper
         v-model="step"
@@ -13,7 +12,7 @@
         header-class="display-none"
       >
         <q-step
-          v-for="(qes, i) in props.quiz.questions"
+          v-for="(qes, i) in props.quiz?.questions"
           :key="i"
           :name="i"
           :title="`q-${i}`"
@@ -71,14 +70,14 @@
       <q-btn
         class="br-8 text-white"
         :color="
-          props.quiz.questions && step === props.quiz.questions.length - 1
+          props.quiz?.questions && step === props.quiz?.questions.length - 1
             ? 'red'
             : 'primary'
         "
         size="md"
         no-caps
         :label="
-          props.quiz.questions && step === props.quiz.questions.length - 1
+          props.quiz?.questions && step === props.quiz?.questions.length - 1
             ? 'Submit'
             : 'Next'
         "
@@ -138,6 +137,10 @@ import UserModel from '@/models/UserModel';
 import { LocalStorage } from 'quasar';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar'
+import UpdateQuiz from 'src/functions/UpdateQuizFun';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+
 const router = useRouter();
 
 const allAnswers = ref<DataObject>({});
@@ -160,6 +163,7 @@ const props = defineProps({
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
   },
+
 });
 
 
@@ -231,8 +235,7 @@ const handelSubmit = () => {
   // Calculate score
   handelScore();
 
-  // Prepare new quiz entry
-  //quiz:[]
+
   interface newQuiz {
     quiz: Quiz;
     score: number;
@@ -270,8 +273,16 @@ const handelSubmit = () => {
       path: RoutesPaths.RESULT_PAGE,
       query: { quizName: props.quiz.name },
     });
+const updatedQuiz=props.quiz
+updatedQuiz.status='not active'
+console.log(updatedQuiz);
+
+    const updateQuizActive= new UpdateQuiz()
+
+updateQuizActive.executeAsync({quiz:updatedQuiz,i: route.query.index })
   } else {
     console.log('This quiz has already been taken by the user.');
+
   }
 };
 

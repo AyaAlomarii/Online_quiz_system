@@ -49,7 +49,7 @@ import { useRouter } from 'vue-router';
 import Quiz from '../../models/QuizModel';
 import RoutesPaths from 'src/router/RoutesPaths';
 const router = useRouter();
-defineProps({
+const props=defineProps({
   quiz: {
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
@@ -61,7 +61,7 @@ defineProps({
 });
 
 const handelAttempt = (quizName: string ) => {
-  router.push({ path: RoutesPaths.QUESTIONS, query: { quizName: quizName } });
- 
+  router.push({ path: RoutesPaths.QUESTIONS, query: { quizName: quizName,index:props.i } });
+
 };
 </script>

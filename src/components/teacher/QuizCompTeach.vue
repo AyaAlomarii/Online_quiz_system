@@ -372,19 +372,28 @@ const sumAllPoints = () => {
   });
   console.log(typeof totalPoints.value, totalPoints.value);
 };
+
 const calculateEndTime = (startTime: string) => {
   const fullDateTimeString = `${date.value} ${startTime}`;
+
+  // Parse the start date and time
   const startDateTime = quasarDate.extractDate(
     fullDateTimeString,
     'YYYY-MM-DD hh:mmA'
   );
 
-  // Check if startDateTime is correctly parsed
   if (!startDateTime) {
     console.error('Date parsing failed for:', fullDateTimeString);
     return 'Error in parsing date';
   }
-}
+
+  // Add 45 minutes (45 * 60 * 1000 milliseconds)
+  const endDateTime = new Date(startDateTime.getTime() + 45 * 60 * 1000);
+
+  // Format the end time as 'hh:mmA'
+  return quasarDate.formatDate(endDateTime, 'hh:mmA');
+};
+
 
 const handelSubmitUpdatedQuiz = async () => {
   sumAllPoints();
