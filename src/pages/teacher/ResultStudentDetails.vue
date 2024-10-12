@@ -1,5 +1,5 @@
 <template>
-  <div class="justify-center q-ma-md q-pa-none">
+  <div class="justify-center  q-pa-md">
     <q-card flat bordered class="br-8 q-pa-none">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
@@ -91,7 +91,7 @@
       </q-card-section>
     </q-card>
 
-    <div class="row justify-end q-my-sm">
+    <div class="row justify-end q-pt-md ">
       <q-btn
         no-caps
         dense

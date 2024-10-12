@@ -278,7 +278,7 @@
                   unelevated
                   dense
                   no-caps
-                  class="br-8 q-px-md br-8"
+                  class="br-8 q-px-md br-8 "
                   text-color="red"
                   outlined
                 />

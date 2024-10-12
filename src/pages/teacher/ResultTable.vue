@@ -36,8 +36,23 @@
         table-header-class="bg-bg-grey"
         @row-click="handleRowClick"
         v-model="selected"
-      />
-    
+    >
+    <template v-slot:body-cell-grade="props">
+          <td class="row items-center bordered " >
+            <q-linear-progress
+              :value="props.row.grade / currentQuiz?.points "
+              class="q-mr-sm"
+              color="primary"
+              track-color="light-grey"
+              size="8px"
+              style="width: 100px"
+            />
+            <span>{{ props.row.grade }}/{{ currentQuiz?.points }}</span>
+          </td>
+        </template>
+  </q-table>
+
+
 
     </div>
   </div>

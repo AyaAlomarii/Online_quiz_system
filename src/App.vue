@@ -1,16 +1,9 @@
-<template>
+<template >
   <router-view />
-  <!-- <q-footer
-      borderless
-      class="row justify-center bg-bg-grey heigh-54px fixed-bottom"
-    >
-      <div class="absolute-center text-secondary text-body2 text-center">
-        © 2024, Made with by <span class="text-primary">Digital Pages</span>
-      </div>
-    </q-footer> -->
+
   <div
       v-if="!$route.path.includes('access')"
-      class="row justify-center bg-bg-grey items-center"
+      class="row justify-center bg-bg-grey items-center q-ma-none"
     >
       <span class="text-grey-8">
         © {{ new Date().getFullYear() }}, Made by

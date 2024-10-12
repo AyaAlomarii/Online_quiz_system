@@ -48,9 +48,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <!-- footer -->
-
     
+
+
   </q-layout>
 </template>
 
