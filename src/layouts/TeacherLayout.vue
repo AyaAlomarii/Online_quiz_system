@@ -1,5 +1,21 @@
 <template>
   <q-layout class="bg-bg-grey">
+    <div
+        class="col-auto bg-transparent q-px-md q-pb-none q-pt-sm row justify-between items-center"
+
+      >
+        <span class="text-h6 text-primary">Online Quiz System</span>
+        <q-btn
+          flat
+          :to="Routes.LOGIN"
+          @click="
+            () => {
+               SessionUtil.logout();
+            }
+          "
+          icon="logout"
+        />
+      </div>
     <!-- Header -->
     <q-card class="height-365 q-ma-md br-8">
       <q-card-section class="no-padding">
@@ -33,15 +49,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <!-- footer -->
-    <q-footer
-      borderless
-      class="row justify-center bg-bg-grey heigh-54px fixed-bottom"
-    >
-      <div class="absolute-center text-secondary text-body2 text-center">
-        © 2024, Made with by <span class="text-primary">Digital Pages</span>
-      </div>
-    </q-footer>
+
   </q-layout>
 </template>
 
@@ -49,7 +57,8 @@
 import UserModel from 'src/models/UserModel';
 import { LocalStorage } from 'quasar';
 import { onMounted, ref } from 'vue';
-
+import SessionUtil from 'src/util/SessionUtil';
+import Routes from 'src/router/RoutesPaths';
 // variables
 const userInfo = ref<UserModel | null>(null); // Handle null
 

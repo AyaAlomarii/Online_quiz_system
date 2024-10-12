@@ -60,9 +60,11 @@ export default class SessionUtil {
 
   // logout
   public static async logout(): Promise<void> {
-    Loading.show();
+    // Loading.show();
     try {
-      try {
+      LocalStorage.removeItem('currentUser')
+      
+      /* try {
         if (SessionUtil.getToken()) {
           // await new LogoutFunc().executeAsync({
           //   token: SessionUtil.getToken(),
@@ -71,11 +73,12 @@ export default class SessionUtil {
             message: StringUtil.translate('loggedOut'),
           });
         }
-      } catch (error) {}
+      } catch (error) {} */
+
     } catch (error) {
       console.error(error);
     } finally {
-      Loading.hide();
+     /*  Loading.hide();
       try {
         if (SessionUtil.getSessionId()) {
           const client = ApiUtil.getAppwriteClient();
@@ -91,7 +94,7 @@ export default class SessionUtil {
         LocalStorage.remove('content');
         LocalStorage.remove(SessionUtil.TOKEN_AT);
         router.replace(RoutesPaths.HOME);
-      }
+      } */
     }
     // NotificationsEventBus.logout();
   }
