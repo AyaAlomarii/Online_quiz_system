@@ -34,9 +34,8 @@
             class="br-8 bg-attempt text-primary"
             size="md"
             no-caps
-            :disable="quiz?.status==='active' ? false : true"
-
-            @click="()=>handelAttempt(quiz.name)"
+            :disable="quiz?.status === 'active' ? false : true"
+            @click="() => handelAttempt(quiz.name)"
             >Attempt</q-btn
           >
           <!-- formattedTime===props.quiz?.start ? false : true -->
@@ -55,7 +54,8 @@ import { LocalStorage, date as quasarDate } from 'quasar'; // Import Quasar's da
 import DataObject from '@/models/DataObject';
 import { ref } from 'vue';
 import UserModel from '@/models/UserModel';
-import { newQuiz,infoQuiz } from 'src/models/QuizLocalModel';
+import { newQuiz, infoQuiz } from 'src/models/QuizLocalModel';
+const currentQuiz = ref<newQuiz>();
 
 const allAnswers = ref<DataObject>({});
 
@@ -64,118 +64,159 @@ const score = ref<number>(0);
 const quizInfoByEmail = ref<DataObject>(
   LocalStorage.getItem('quizInfoByEmail') || {}
 );
+
 const currentUser = ref<UserModel>(LocalStorage.getItem('currentUser'));
 
+const userQuizzes = ref<newQuiz[]>(
+  quizInfoByEmail.value[currentUser.value?.email]?.quizzes || []
+);
 const timeNow = new Date();
 const formattedTime = quasarDate.formatDate(timeNow, 'hh:mmA');
 
-
-
 const router = useRouter();
-const props=defineProps({
+const props = defineProps({
   quiz: {
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
   },
   i: {
     type: Number,
-    required:true
+    required: true,
   },
 });
 
-console.log(formattedTime===props.quiz?.start,props.quiz?.start,formattedTime); // Example: "10:24:35.123"
+console.log(
+  formattedTime === props.quiz?.start,
+  props.quiz?.start,
+  formattedTime
+); // Example: "10:24:35.123"
 //the idea is not to end in specific time
-//! the idea is to end after 45 min from what he started 
+//! the idea is to end after 45 min from what he started
 //! convert the 45  diff to local storage not a static value
-/* 
-const quizeStartedAt = LocalStorage.getItem('quizeStartedAt') as number;
-  if (quizeStartedAt) {
-    let diff = Date.now() - quizeStartedAt;
-    if (diff) {
-      diff = diff / 1000 / 60;
+
+const handelAttempt = (quizName: string) => {
+  // Find the quiz in the user's taken quizzes if it exists
+  currentQuiz.value = userQuizzes.value.find(
+    (entry: newQuiz) => entry.quiz.name === props.quiz.name
+  ) || null;
+
+  let quizStartedAt = currentQuiz.value?.quizStartedAt || Date.now(); // Use existing start time or set a new one
+
+  const diffInMinutes = (Date.now() - quizStartedAt) / 1000 / 60; // Calculate the time difference
+console.log(Date.now()/ 1000 / 60 , quizStartedAt/ 1000 / 60,diffInMinutes);
+
+  if (diffInMinutes < 45) {
+    // If within 45 minutes, allow the user to attempt the quiz
+    if (!currentQuiz.value) {
+      const newQuizEntry: newQuiz = {
+        quiz: props.quiz,
+        score: score.value,
+        quizStartedAt: quizStartedAt,
+        answersObj: allAnswers.value,
+      };
+
+      userQuizzes.value.push(newQuizEntry); // Add new quiz entry to the user's quizzes
+
+      quizInfoByEmail.value[currentUser.value?.email] = {
+        user: currentUser.value,
+        quizzes: userQuizzes.value,
+      } as infoQuiz;
+
+      LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value); // Save to local storage
     }
-    diff = 45 - diff;
-    if (diff > 0) {
-      router.push({
-        path: `/student/quiz/${index}`,
-        query: { name: quizName },
-      });
-    } else {
-      router.push({
-        path: '/score',
-      });
-    }
+
+    router.push({
+      path: RoutesPaths.QUESTIONS,
+      query: { quizName: quizName, index: props.i },
+    });
   } else {
-    LocalStorage.setItem('quizeStartedAt', Date.now());
+    // If more than 45 minutes have passed, redirect to results
+    router.push({
+      path: RoutesPaths.RESULT_PAGE,
+      query: { quizName: props.quiz.name },
+    });
+  }
+
+  console.log('Quiz Info:', quizInfoByEmail.value);
+};
+
+
+
+
+/* const handelAttempt = (quizName: string) => {
+  // Check if the user has already taken this quiz
+  // const userEmail = currentUser.value.email;
+  // const userQuizzes = quizInfoByEmail.value[userEmail]?.quizzes || [];
+
+  const hasTakenQuiz = userQuizzes.value.some(
+    (entry: any) => entry.quiz.name === props.quiz.name
+  );
+
+  if (!hasTakenQuiz) {
+    currentQuiz.value =
+      userQuizzes.value.find((q) => q.quiz.name === props.quiz.quizName) ||
+      null;
+
+    let quizStartedAt = currentQuiz.value?.quizStartedAt as number;
+
+    if (quizStartedAt) {
+      let diff = Date.now() - quizStartedAt;
+      if (diff) {
+        diff = diff / 1000 / 60;
+      }
+      diff = 45 - diff;
+      if (diff > 0) {
+
+        router.push({
+      path: RoutesPaths.QUESTIONS,
+      query: { quizName: quizName, index: props.i },
+    });
+
+      } else {
+
+        router.push({
+    path: RoutesPaths.RESULT_PAGE,
+    query: { quizName: props.quiz.name },
+  });
+
+      }
+    } else {
+      quizStartedAt = Date.now();
+
+      router.push({
+      path: RoutesPaths.QUESTIONS,
+      query: { quizName: quizName, index: props.i },
+    });
+      /*  LocalStorage.setItem('quizStartedAt', Date.now());
     router.push({
       path: `/student/quiz/${index}`,
       query: { name: quizName },
     });
-  } 
-    */
-const handelAttempt = (quizName: string ) => {
-  router.push({ path: RoutesPaths.QUESTIONS, query: { quizName: quizName,index:props.i } });
+    }
+
+    const newQuizEntry: newQuiz = {
+      quiz: props.quiz,
+      score: score.value,
+      quizStartedAt: quizStartedAt,
+      answersObj: allAnswers.value,
+    };
+
+    userQuizzes.value.push(newQuizEntry); // Add new quiz entry if not taken
+    quizInfoByEmail.value[currentUser.value?.email] = {
+      user: currentUser.value,
+      quizzes: userQuizzes.value,
+    } as infoQuiz;
 
 
-  // Parse the start time and current time as Date objects
-  const startTime = quasarDate.extractDate(props.quiz?.start, 'hh:mmA'); 
-  const currentTime = quasarDate.extractDate(formattedTime, 'hh:mmA'); 
 
-  if (startTime && currentTime) {
-    // Calculate the difference in milliseconds
-    const timeDifference = currentTime.getTime() - startTime.getTime();
-    
-    // Convert milliseconds to minutes
-    const minutesDifference = Math.floor(timeDifference / (1000 * 60));
-
-    console.log(`Time difference: ${minutesDifference} minutes`);
-  } else {
-    console.log('Invalid time parsing');
-  } 
-
-  const newQuizEntry :newQuiz= {
-    quiz: props.quiz,
-    score: score.value,
-    answersObj: allAnswers.value,
-   
-  };
-
-
-  // Check if the user has already taken this quiz
-  const userEmail = currentUser.value.email;
-  const userQuizzes = quizInfoByEmail.value[userEmail]?.quizzes || [];
-
-  const hasTakenQuiz = userQuizzes.some(
-    (entry: any) => entry.quiz.name === props.quiz.name
-  );
-  
-  if (!hasTakenQuiz) {
-
-   /*  if(quizInfoByEmail.value[userEmail]?.userStartTime){
-
-
-    } */
-
-    
-    
-    userQuizzes.push(newQuizEntry); // Add new quiz entry if not taken
-    quizInfoByEmail.value[userEmail] = {
-      user:currentUser.value,
-      quizzes:userQuizzes,
-      userStartTime: formattedTime
-    } as infoQuiz
+    // Parse the start time and current time as Date objects
+    // const startTime = quasarDate.extractDate(props.quiz?.start, 'hh:mmA');
+    // const currentTime = quasarDate.extractDate(formattedTime, 'hh:mmA');
 
     LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value); // Save to local storage
     console.log('Quiz submitted:', quizInfoByEmail.value);
-
-
-
-
-
   } else {
     console.log('This quiz has already been taken by the user.');
-
   }
-
-};
+}; */
 </script>

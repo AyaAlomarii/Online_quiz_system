@@ -23,7 +23,9 @@
 
         <q-card-section class="column">
           <div>
-            <span v-if="errorMessage!==''" class="text-red text-body2">{{ errorMessage }}</span>
+            <span v-if="errorMessage !== ''" class="text-red text-body2">{{
+              errorMessage
+            }}</span>
             <q-input
               v-model="email"
               label="Email"
@@ -71,7 +73,6 @@
               color="primary"
               class="full-width q-mt-md br-8"
               type="submit"
-
             />
           </div>
         </q-card-section>
@@ -163,6 +164,7 @@
             <q-btn
               type="submit"
               label="Create"
+              v-close-popup
               dense
               class="height-38 width-93 br-8 bg-primary text-white q-mr-sm q-py-lg"
               size="md"
@@ -217,33 +219,29 @@ const handelLogin = async () => {
       console.log(error);
     }); */
 
-    const loginFunc = new LoginFun();
-allUsers.value = (await loginFunc.executeAsync()) as UserModel[];
-console.log(allUsers.value);
+  const loginFunc = new LoginFun();
+  allUsers.value = (await loginFunc.executeAsync()) as UserModel[];
+  console.log(allUsers.value);
 
-// Find the user based on email and password
-currentUsers.value =
-  allUsers.value.find(
-    (q) => q.email === email.value && q.password === password.value
-  ) || null;
+  // Find the user based on email and password
+  currentUsers.value =
+    allUsers.value.find(
+      (q) => q.email === email.value && q.password === password.value
+    ) || null;
 
-console.log(currentUsers.value);
+  console.log(currentUsers.value);
 
-
-if (currentUsers.value !== null) {
-
-  LocalStorage.set('currentUser', currentUsers.value);
-  if (currentUsers.value.role === 'student') {
-    router.push({ path: Routes.QUIZ });
-  } else if (currentUsers.value.role === 'teacher') {
-    router.push({ path: Routes.TEACHER_QUIZ });
+  if (currentUsers.value !== null) {
+    LocalStorage.set('currentUser', currentUsers.value);
+    if (currentUsers.value.role === 'student') {
+      router.push({ path: Routes.QUIZ });
+    } else if (currentUsers.value.role === 'teacher') {
+      router.push({ path: Routes.TEACHER_QUIZ });
+    }
+  } else {
+    errorMessage.value = 'Invalid email or password.';
+    console.log('Invalid email or password.');
   }
-} else {
-  errorMessage.value='Invalid email or password.'
-  console.log('Invalid email or password.');
-
-}
-
 };
 
 const handelRegister = () => {

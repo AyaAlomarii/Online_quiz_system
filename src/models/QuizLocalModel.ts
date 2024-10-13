@@ -7,9 +7,9 @@ import UserModel from './UserModel';
   quiz: Quiz;
   score: number;
   answersObj:DataObject;
+  quizStartedAt:number
 };
 export  interface infoQuiz extends DataObject{
   user:UserModel,
-  userStartTime:string,
   quizzes:newQuiz[]
 }
