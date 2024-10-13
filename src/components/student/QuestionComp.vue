@@ -121,14 +121,13 @@
 
           <!--  -->
         </q-card-actions>
-
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, PropType, onBeforeUnmount  } from 'vue';
+import { ref, PropType, onBeforeUnmount } from 'vue';
 import { Quiz } from 'src/models/QuizModel';
 import DataObject from 'src/models/DataObject';
 import RoutesPaths from 'src/router/RoutesPaths';
@@ -136,7 +135,7 @@ import RoutesPaths from 'src/router/RoutesPaths';
 import UserModel from '@/models/UserModel';
 import { LocalStorage } from 'quasar';
 import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar';
 import UpdateQuiz from 'src/functions/UpdateQuizFun';
 import { useRoute } from 'vue-router';
 const route = useRoute();
@@ -147,25 +146,44 @@ const allAnswers = ref<DataObject>({});
 const step = ref<number>(0);
 const alert = ref<boolean>(false);
 const score = ref<number>(0);
-// const usersInfoQuiz = ref<userQuiz[]>(
-//   LocalStorage.getItem('usersQuizzes') || []
-// );
-// const newUsersQuiz = ref<newQuiz[]>([]);
 const quizInfoByEmail = ref<DataObject>(
   LocalStorage.getItem('quizInfoByEmail') || {}
 );
 const currentUser = ref<UserModel>(LocalStorage.getItem('currentUser'));
 
+interface QuizData {
+  quiz: Quiz;
+  score: number;
+  answersObj: DataObject;
+}
+interface newQuiz {
+  quiz: Quiz;
+  score: number;
+  answersObj: DataObject;
+}
+interface infoQuiz {
+  user: UserModel;
+  quizzes: newQuiz[];
+}
 
+const userEmail = ref<string>(currentUser.value.email);
 
+//variables
+const userQuizzes = ref<QuizData[]>(
+  quizInfoByEmail.value[userEmail.value]?.quizzes || []
+);
+const currentQuiz = ref<QuizData>();
+
+const quizIndexInObj = ref<number>(
+  userQuizzes.value.findIndex((q) => q.quiz.name === route.query.quizName) ||
+    null
+);
 const props = defineProps({
   quiz: {
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
   },
-
 });
-
 
 // Functions
 const handelScore = () => {
@@ -188,43 +206,50 @@ const handelScore = () => {
     } else {
       console.log('No answer selected for question', questionIndex);
 
-      allAnswers.value[questionIndex]={text:'',correct:false}
-
+      allAnswers.value[questionIndex] = { text: '', correct: false };
     }
 
     console.log(score.value, `/${props.quiz.points}`);
-
   });
   console.log(allAnswers.value);
-
 };
 
-const nextQuestion = (i:number) => {
+const nextQuestion = (i: number) => {
+  currentQuiz.value =
+    userQuizzes.value.find((q) => q.quiz.name === route.query.quizName) || null;
 
-  const selectedAnswer = allAnswers.value[i]; // Get the selected answer for the current question
+  const selectedAnswer = allAnswers.value[i];
 
-if (!selectedAnswer || selectedAnswer.text === '') {
-  console.log(`No answer selected for question ${i + 1}`);
+  if (!selectedAnswer || selectedAnswer.text === '') {
+    console.log(`No answer selected for question ${i + 1}`);
 
-  allAnswers.value[i]={text:'',correct:false}
-} else {
-  console.log(`Answer selected for question ${i + 1}:`, selectedAnswer.text);
-}
+    allAnswers.value[i] = { text: '', correct: false };
+  } else {
+    console.log(`Answer selected for question ${i + 1}:`, selectedAnswer.text);
+  }
+
+  currentQuiz.value.answersObj = allAnswers.value;
+  console.log(quizIndexInObj);
+  userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
+  console.log(userQuizzes.value);
+
+  quizInfoByEmail.value[userEmail.value] = {
+    user: currentUser.value,
+    quizzes: userQuizzes.value,
+  } as infoQuiz;
+
+  LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value);
 
   if (props.quiz.questions && step.value !== props.quiz.questions.length - 1) {
     step.value++;
 
     console.log(allAnswers.value);
-
   } else {
     console.log('last question ');
     //open submit dialog
     alert.value = true;
   }
-
-
 };
-
 
 const previousQuestion = () => {
   step.value--;
@@ -234,90 +259,65 @@ const previousQuestion = () => {
 const handelSubmit = () => {
   // Calculate score
   handelScore();
+  currentQuiz.value.score = score.value;
+  console.log(quizIndexInObj);
+  userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
+  console.log(userQuizzes.value);
 
+  quizInfoByEmail.value[userEmail.value] = {
+    user: currentUser.value,
+    quizzes: userQuizzes.value,
+  } as infoQuiz;
 
-  interface newQuiz {
-    quiz: Quiz;
-    score: number;
-    answersObj:DataObject;
-  };
-  interface infoQuiz{
-    user:UserModel,
-    quizzes:newQuiz[]
-  }
-  const newQuizEntry :newQuiz= {
-    quiz: props.quiz,
-    score: score.value,
-    answersObj: allAnswers.value,
-  };
+  LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value);
 
+  router.push({
+    path: RoutesPaths.RESULT_PAGE,
+    query: { quizName: props.quiz.name },
+  });
+  const updatedQuiz = props.quiz;
+  updatedQuiz.status = 'not active';
+  console.log(updatedQuiz);
 
-  // Check if the user has already taken this quiz
-  const userEmail = currentUser.value.email;
-  const userQuizzes = quizInfoByEmail.value[userEmail]?.quizzes || [];
+  const updateQuizActive = new UpdateQuiz();
 
-  const hasTakenQuiz = userQuizzes.some(
-    (entry: any) => entry.quiz.name === props.quiz.name
-  );
-
-  if (!hasTakenQuiz) {
-    userQuizzes.push(newQuizEntry); // Add new quiz entry if not taken
-    quizInfoByEmail.value[userEmail] = {
-      user:currentUser.value,
-      quizzes:userQuizzes
-    } as infoQuiz
-
-    LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value); // Save to local storage
-    console.log('Quiz submitted:', quizInfoByEmail.value);
-    router.push({
-      path: RoutesPaths.RESULT_PAGE,
-      query: { quizName: props.quiz.name },
-    });
-const updatedQuiz=props.quiz
-updatedQuiz.status='not active'
-console.log(updatedQuiz);
-
-    const updateQuizActive= new UpdateQuiz()
-
-updateQuizActive.executeAsync({quiz:updatedQuiz,i: route.query.index })
-  } else {
-    console.log('This quiz has already been taken by the user.');
-
-  }
+  updateQuizActive.executeAsync({ quiz: updatedQuiz, i: route.query.index });
 };
 
 //timer
 
-
 const time = ref<number>(Number(LocalStorage.getItem('time')) || 45 * 60);
-  const timer = ref<string>(LocalStorage.getItem('timer') || `${Math.floor(time.value / 60)}:${(time.value % 60).toString().padStart(2, '0')}`);
+const timer = ref<string>(
+  LocalStorage.getItem('timer') ||
+    `${Math.floor(time.value / 60)}:${(time.value % 60)
+      .toString()
+      .padStart(2, '0')}`
+);
 
 const instance = setInterval(() => {
-if(time.value>0){
-  timer.value = `${Math.floor(time.value / 60).toString().padStart(2, '0')}:${(time.value % 60).toString().padStart(2, '0')}`;
+  if (time.value > 0) {
+    timer.value = `${Math.floor(time.value / 60)
+      .toString()
+      .padStart(2, '0')}:${(time.value % 60).toString().padStart(2, '0')}`;
 
-  LocalStorage.set('timer',timer.value)
-  LocalStorage.set('time',time.value)
-  time.value = time.value - 1;
-}else{
-  clearInterval(instance);
-  LocalStorage.removeItem('time')
-  LocalStorage.removeItem('timer')
-  console.log('time is up',time.value,time.value/60,time.value%60);
-  showNotify()
-  handelSubmit()
-
-}
-
+    LocalStorage.set('timer', timer.value);
+    LocalStorage.set('time', time.value);
+    time.value = time.value - 1;
+  } else {
+    clearInterval(instance);
+    LocalStorage.removeItem('time');
+    LocalStorage.removeItem('timer');
+    console.log('time is up', time.value, time.value / 60, time.value % 60);
+    showNotify();
+    handelSubmit();
+  }
 }, 1000);
 
 onBeforeUnmount(() => {
   clearInterval(instance);
 });
 
-
-
-const $q = useQuasar()
+const $q = useQuasar();
 
 const showNotify = () => {
   $q.notify({
@@ -336,6 +336,4 @@ const showNotify = () => {
 
   // console.log(`The value changed from ${oldVal} to ${newVal}`); // Run this function whenever the timer changes
 }); */
-
-
 </script>

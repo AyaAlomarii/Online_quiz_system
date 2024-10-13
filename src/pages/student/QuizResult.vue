@@ -1,5 +1,5 @@
 <template>
-  <div v-if="quiz" class="justify-center q-ma-md q-pa-none">
+  <div v-if="quiz" class="justify-center q-pa-md q-pa-none">
     <q-card flat bordered class="br-8 q-pa-none">
       <q-card-section class="br-8 row justify-between">
         <div class="row">

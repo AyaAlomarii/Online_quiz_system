@@ -1,5 +1,7 @@
 <template>
   <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm q-mt-sm q-pa-md">
+
+  
     <q-card class="q-pa-sm q-pb-lg bg-white text-black">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
@@ -303,7 +305,7 @@
 import { computed, PropType, ref } from 'vue';
 import { Question, Quiz } from '@/models/QuizModel';
 import {  date as quasarDate } from 'quasar'; // Import Quasar date utility
-
+// import { date } from 'quasar'
 
 //variables
 const showEditDialog = ref<boolean>(false);
