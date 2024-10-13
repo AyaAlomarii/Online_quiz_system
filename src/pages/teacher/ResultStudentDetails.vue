@@ -115,11 +115,7 @@ import Routes from 'src/router/RoutesPaths';
 
 //variables
 const quizByEmail = ref<DataObject>({});
-  interface newQuiz {
-  quiz: Quiz;
-  score: number;
-  answersObj: DataObject;
-}
+
 const quizInfo = ref<newQuiz>();
 
 const route = useRoute();

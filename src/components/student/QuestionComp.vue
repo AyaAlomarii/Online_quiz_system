@@ -133,11 +133,16 @@ import DataObject from 'src/models/DataObject';
 import RoutesPaths from 'src/router/RoutesPaths';
 // import eventBus from 'src/EventBus/EventBus';
 import UserModel from '@/models/UserModel';
-import { LocalStorage } from 'quasar';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import UpdateQuiz from 'src/functions/UpdateQuizFun';
 import { useRoute } from 'vue-router';
+
+import { LocalStorage, date as quasarDate } from 'quasar'; // Import Quasar's date utility
+import { newQuiz,infoQuiz } from 'src/models/QuizLocalModel';
+const timeNow = new Date();
+
+/*  formattedTime===props.quiz?.end ? false : true  */
 const route = useRoute();
 
 const router = useRouter();
@@ -151,28 +156,16 @@ const quizInfoByEmail = ref<DataObject>(
 );
 const currentUser = ref<UserModel>(LocalStorage.getItem('currentUser'));
 
-interface QuizData {
-  quiz: Quiz;
-  score: number;
-  answersObj: DataObject;
-}
-interface newQuiz {
-  quiz: Quiz;
-  score: number;
-  answersObj: DataObject;
-}
-interface infoQuiz {
-  user: UserModel;
-  quizzes: newQuiz[];
-}
+
+
 
 const userEmail = ref<string>(currentUser.value.email);
 
 //variables
-const userQuizzes = ref<QuizData[]>(
+const userQuizzes = ref<newQuiz[]>(
   quizInfoByEmail.value[userEmail.value]?.quizzes || []
 );
-const currentQuiz = ref<QuizData>();
+const currentQuiz = ref<newQuiz>();
 
 const quizIndexInObj = ref<number>(
   userQuizzes.value.findIndex((q) => q.quiz.name === route.query.quizName) ||
@@ -260,7 +253,6 @@ const handelSubmit = () => {
   // Calculate score
   handelScore();
   currentQuiz.value.score = score.value;
-  console.log(quizIndexInObj);
   userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
   console.log(userQuizzes.value);
 
@@ -286,22 +278,20 @@ const handelSubmit = () => {
 
 //timer
 
-const time = ref<number>(Number(LocalStorage.getItem('time')) || 45 * 60);
+const time = ref<number>(45 * 60);
 const timer = ref<string>(
-  LocalStorage.getItem('timer') ||
-    `${Math.floor(time.value / 60)}:${(time.value % 60)
-      .toString()
-      .padStart(2, '0')}`
+  `${Math.floor(time.value / 60)}:${(time.value % 60)
+    .toString()
+    .padStart(2, '0')}`
 );
 
 const instance = setInterval(() => {
-  if (time.value > 0) {
+  const formattedTime = quasarDate.formatDate(timeNow, 'hh:mmA');
+  if (time.value > 0 && formattedTime !== props.quiz.end) {
     timer.value = `${Math.floor(time.value / 60)
       .toString()
       .padStart(2, '0')}:${(time.value % 60).toString().padStart(2, '0')}`;
 
-    LocalStorage.set('timer', timer.value);
-    LocalStorage.set('time', time.value);
     time.value = time.value - 1;
   } else {
     clearInterval(instance);
@@ -336,4 +326,8 @@ const showNotify = () => {
 
   // console.log(`The value changed from ${oldVal} to ${newVal}`); // Run this function whenever the timer changes
 }); */
+
+//!attempt if date .now
+//Save the start time let say 12.00
+//when its 12:45 the timer will stop
 </script>

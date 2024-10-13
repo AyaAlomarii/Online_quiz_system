@@ -19,6 +19,7 @@ import Quiz from 'src/models/QuizModel';
 import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
 
 
+
 // import eventBus from 'src/EventBus/EventBus'
 
 const route = useRoute();
