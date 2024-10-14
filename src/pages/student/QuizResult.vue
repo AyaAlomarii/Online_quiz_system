@@ -35,7 +35,9 @@
           flat
           bordered
           :class="
-            quiz?.answersObj[i]?.correct
+            qes.options.some(
+              (option) => option.text === quiz.answersObj[i] && option.correct
+            )
               ? 'q-ma-md br-correct'
               : 'q-ma-md br-error'
           "
@@ -69,7 +71,7 @@
                 class="column q-py-xs"
               >
                 <q-radio
-                  v-model="quiz.answersObj[i].text"
+                  v-model="quiz.answersObj[i]"
                   :val="ans.text"
                   :label="ans.text"
                   color="primary"
@@ -77,10 +79,8 @@
                   disable
                   dense
                   :class="{
-                    'text-green': ans.correct,
-
-                    'text-red':
-                      quiz?.answersObj[i]?.text === ans?.text && !ans?.correct,
+                    'text-green':ans.correct,
+                    'text-red': quiz.answersObj[i] === ans.text && !ans.correct,
                   }"
                 />
               </div>
@@ -117,7 +117,6 @@ import UserModel from '@/models/UserModel';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 import { newQuiz } from 'src/models/QuizLocalModel';
-
 
 //variables
 const userQuizzes = ref<newQuiz[]>([]);

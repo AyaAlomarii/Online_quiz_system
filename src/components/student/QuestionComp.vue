@@ -45,7 +45,7 @@
             >
               <q-radio
                 v-model="allAnswers[i]"
-                :val="ans"
+                :val="ans.text"
                 :label="ans.text"
                 color="primary"
                 keep-color
@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, PropType, onBeforeUnmount } from 'vue';
+import { ref, PropType, onBeforeUnmount, onMounted, toRaw } from 'vue';
 import { Quiz } from 'src/models/QuizModel';
 import DataObject from 'src/models/DataObject';
 import RoutesPaths from 'src/router/RoutesPaths';
@@ -138,15 +138,14 @@ import { useQuasar } from 'quasar';
 import UpdateQuiz from 'src/functions/UpdateQuizFun';
 import { useRoute } from 'vue-router';
 
-import { LocalStorage, date as quasarDate } from 'quasar'; // Import Quasar's date utility
-import { newQuiz,infoQuiz } from 'src/models/QuizLocalModel';
-const timeNow = new Date();
+import { LocalStorage } from 'quasar'; // Import Quasar's date utility
+import { newQuiz, infoQuiz } from 'src/models/QuizLocalModel';
 
 /*  formattedTime===props.quiz?.end ? false : true  */
 const route = useRoute();
 
 const router = useRouter();
-
+const currentQuiz = ref<newQuiz>();
 const allAnswers = ref<DataObject>({});
 const step = ref<number>(0);
 const alert = ref<boolean>(false);
@@ -156,8 +155,15 @@ const quizInfoByEmail = ref<DataObject>(
 );
 const currentUser = ref<UserModel>(LocalStorage.getItem('currentUser'));
 
+// const diffInMinutes = ref<number>(0)
 
+const time = ref<number>(45 * 60);
 
+const timer = ref<string>(
+  `${Math.floor(time.value / 60)}:${(time.value % 60)
+    .toString()
+    .padStart(2, '0')}`
+);
 
 const userEmail = ref<string>(currentUser.value.email);
 
@@ -165,7 +171,6 @@ const userEmail = ref<string>(currentUser.value.email);
 const userQuizzes = ref<newQuiz[]>(
   quizInfoByEmail.value[userEmail.value]?.quizzes || []
 );
-const currentQuiz = ref<newQuiz>();
 
 const quizIndexInObj = ref<number>(
   userQuizzes.value.findIndex((q) => q.quiz.name === route.query.quizName) ||
@@ -176,6 +181,58 @@ const props = defineProps({
     type: Object as PropType<Quiz>,
     default: {} as Quiz,
   },
+});
+
+const updatedQuiz = ref<Quiz>(props.quiz);
+
+onMounted(() => {
+  currentQuiz.value =
+    userQuizzes.value.find((q) => q.quiz.name === route.query.quizName) || null;
+  allAnswers.value = currentQuiz.value?.answersObj || {};
+  // Use the existing quizStartedAt or load it from local storage if needed
+  let quizStartedAt: number = currentQuiz.value?.quizStartedAt;
+  console.log(currentQuiz.value.quizStartedAt);
+
+  if (quizStartedAt) {
+    quizStartedAt = currentQuiz.value.quizStartedAt;
+    console.log(
+      `Loaded existing quizStartedAt: ${currentQuiz.value.quizStartedAt}`
+    );
+  } else {
+    quizStartedAt = Date.now();
+    console.log(`New quizStartedAt initialized: ${quizStartedAt}`);
+  }
+
+  const now = Date.now();
+  const diffInSeconds = Math.floor((now - quizStartedAt) / 1000);
+  // Set the remaining time (in seconds), ensuring it doesn't go negative
+  const totalQuizTime = 45 * 60; // 45 minutes in seconds
+  time.value = Math.max(totalQuizTime - diffInSeconds, 0);
+  console.log(time.value);
+
+  console.log(
+    `Quiz started at: ${quizStartedAt}, Now: ${now}, Diff: ${diffInSeconds} seconds`
+  );
+
+  /*  if (diffInSeconds < 45 * 60) { // 45 minutes = 2700 seconds
+    console.log('User is still within the quiz time limit.');
+  } else {
+    console.log('Quiz time is up. Redirecting to result page.');
+    router.push({
+      path: RoutesPaths.RESULT_PAGE,
+      query: { quizName: props.quiz.name },
+    });
+  } */
+
+  if (time.value <= 0) {
+    console.log('Quiz time is up. Redirecting to the result page.');
+    handelSubmit();
+
+    return;
+  }
+
+  // Start the timer to update every second
+  startTimer();
 });
 
 // Functions
@@ -189,17 +246,17 @@ const handelScore = () => {
     if (selectedAnswer) {
       ele.options.forEach((op) => {
         // Check if the selected answer's text matches the correct option
-        if (op.correct && op.text === selectedAnswer.text) {
+        if (op.correct && op.text === selectedAnswer) {
           console.log(op.correct, selectedAnswer.text, 'right');
           score.value += ele.point; // Add points for correct answer
         } else {
-          console.log(op.correct, selectedAnswer.text, 'wrong');
+          console.log(op.correct, selectedAnswer, 'wrong');
         }
       });
     } else {
       console.log('No answer selected for question', questionIndex);
 
-      allAnswers.value[questionIndex] = { text: '', correct: false };
+      allAnswers.value[questionIndex] = '';
     }
 
     console.log(score.value, `/${props.quiz.points}`);
@@ -216,13 +273,13 @@ const nextQuestion = (i: number) => {
   if (!selectedAnswer || selectedAnswer.text === '') {
     console.log(`No answer selected for question ${i + 1}`);
 
-    allAnswers.value[i] = { text: '', correct: false };
+    allAnswers.value[i] = '';
   } else {
     console.log(`Answer selected for question ${i + 1}:`, selectedAnswer.text);
   }
 
-  currentQuiz.value.answersObj = allAnswers.value;
-  console.log(quizIndexInObj);
+  // currentQuiz.value.answersObj = allAnswers.value;
+  console.log(quizIndexInObj.value);
   userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
   console.log(userQuizzes.value);
 
@@ -252,7 +309,12 @@ const previousQuestion = () => {
 const handelSubmit = () => {
   // Calculate score
   handelScore();
+  currentQuiz.value =
+    userQuizzes.value.find((q) => q.quiz.name === route.query.quizName) || null;
+
   currentQuiz.value.score = score.value;
+  console.log(currentQuiz.value);
+
   userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
   console.log(userQuizzes.value);
 
@@ -263,49 +325,58 @@ const handelSubmit = () => {
 
   LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value);
 
-  router.push({
-    path: RoutesPaths.RESULT_PAGE,
-    query: { quizName: props.quiz.name },
-  });
-  const updatedQuiz = props.quiz;
-  updatedQuiz.status = 'not active';
-  console.log(updatedQuiz);
+  console.log('Before:', toRaw(updatedQuiz.value));
+  console.log('Props:', currentQuiz.value?.quiz);
+
+  // Safely update the quiz status
+  if (currentQuiz.value.quiz) {
+    currentQuiz.value.quiz.status = 'not active';
+    updatedQuiz.value = currentQuiz.value.quiz;
+    console.log(
+      'Updated quiz status:',
+      currentQuiz.value.quiz.status,
+      props.quiz.name
+    );
+    router.push({
+      path: RoutesPaths.RESULT_PAGE,
+      query: { quizName: currentQuiz.value.quiz.name },
+    });
+  } else {
+    console.error('Quiz object is missing!');
+  }
+  console.log('af', updatedQuiz.value);
 
   const updateQuizActive = new UpdateQuiz();
 
-  updateQuizActive.executeAsync({ quiz: updatedQuiz, i: route.query.index });
+  updateQuizActive.executeAsync({
+    quiz: updatedQuiz.value,
+    i: route.query.index,
+  });
 };
 
-//timer
+// Timer logic
+const startTimer = () => {
+  const instance = setInterval(() => {
+    if (time.value > 0) {
+      // Update the displayed time (in minutes and seconds)
+      timer.value = `${Math.floor(time.value / 60)
+        .toString()
+        .padStart(2, '0')}:${(time.value % 60).toString().padStart(2, '0')}`;
 
-const time = ref<number>(45 * 60);
-const timer = ref<string>(
-  `${Math.floor(time.value / 60)}:${(time.value % 60)
-    .toString()
-    .padStart(2, '0')}`
-);
+      time.value--;
+    } else {
+      // Time is up, clear the interval and submit the quiz
+      clearInterval(instance);
+      console.log('Time is up! Submitting the quiz.');
+      showNotify();
+      handelSubmit();
+    }
+  }, 1000);
 
-const instance = setInterval(() => {
-  const formattedTime = quasarDate.formatDate(timeNow, 'hh:mmA');
-  if (time.value > 0 && formattedTime !== props.quiz.end) {
-    timer.value = `${Math.floor(time.value / 60)
-      .toString()
-      .padStart(2, '0')}:${(time.value % 60).toString().padStart(2, '0')}`;
-
-    time.value = time.value - 1;
-  } else {
+  onBeforeUnmount(() => {
     clearInterval(instance);
-    LocalStorage.removeItem('time');
-    LocalStorage.removeItem('timer');
-    console.log('time is up', time.value, time.value / 60, time.value % 60);
-    showNotify();
-    handelSubmit();
-  }
-}, 1000);
-
-onBeforeUnmount(() => {
-  clearInterval(instance);
-});
+  });
+};
 
 const $q = useQuasar();
 
@@ -319,6 +390,7 @@ const showNotify = () => {
     timeout: 5000, // Show for 5 seconds
   });
 };
+
 // Watch the timerValue ref
 /* watch(timer, (newVal, oldVal) => {
   onTimerChange();

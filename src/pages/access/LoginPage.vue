@@ -23,9 +23,9 @@
 
         <q-card-section class="column">
           <div>
-            <span v-if="errorMessage !== ''" class="text-red text-body2">{{
+            <div v-if="errorMessage ==='Invalid email or password.'" class="text-red text-caption q-pb-md">{{
               errorMessage
-            }}</span>
+            }}</div>
             <q-input
               v-model="email"
               label="Email"
@@ -135,6 +135,9 @@
             class="bg-white q-pb-md"
             outlined
           />
+          <div v-if="errorMessage ==='An account with this email already exists'" class="text-red text-caption q-pb-md">{{
+              errorMessage
+            }}</div>
           <q-input
             v-model="registerPassword"
             dense
@@ -152,6 +155,9 @@
             class="bg-white q-pb-md"
             outlined
           />
+          <div v-if="errorMessage ==='Passwords do not match,please try again'" class="text-red text-caption q-pb-md">{{
+              errorMessage
+            }}</div>
           <q-toggle
             v-model="teacher"
             label="are you teacher ?"
@@ -160,24 +166,24 @@
             dense
           />
 
-          <q-card-actions class="q-pa-lg" align="right">
+          <div class="q-py-md" align="right">
+
             <q-btn
               type="submit"
               label="Create"
-              v-close-popup
               dense
-              class="height-38 width-93 br-8 bg-primary text-white q-mr-sm q-py-lg"
-              size="md"
+              class=" br-8 bg-primary text-white q-mr-md q-py-xs q-px-md "
+
             />
             <q-btn
               label="Cancel"
               v-close-popup
               type="reset"
               dense
-              class="height-38 width-93 br-8 bg-white text-accent"
+              class="br-8 bg-white text-accent  q-py-xs q-px-md"
               outlined
             />
-          </q-card-actions>
+          </div>
         </q-form>
       </q-card-section>
     </q-card>
@@ -185,7 +191,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, toRaw } from 'vue';
 import UserModel from 'src/models/UserModel';
 import Routes from 'src/router/RoutesPaths';
 import { LocalStorage } from 'quasar';
@@ -204,29 +210,22 @@ const registerEmail = ref<string>();
 const registerPassword = ref<string>();
 const registerConfirmPassword = ref<string>();
 const userInfoReg = ref<UserModel[]>(LocalStorage.getItem('users') || []);
+
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-// import LoginFunc from '../functions/LoginFunc';
-const handelLogin = async () => {
-  /*   new LoginFunc()
-    .executeAsync({ email: email, password: password })
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    }); */
-
-  const loginFunc = new LoginFun();
+onMounted(async()=>{
+    const loginFunc = new LoginFun();
   allUsers.value = (await loginFunc.executeAsync()) as UserModel[];
-  console.log(allUsers.value);
+  console.log(toRaw(allUsers.value));
+})
+
+const handelLogin =  () => {
 
   // Find the user based on email and password
   currentUsers.value =
     allUsers.value.find(
-      (q) => q.email === email.value && q.password === password.value
+      (q) => q.email === email.value.toLocaleLowerCase() && q.password === password.value
     ) || null;
 
   console.log(currentUsers.value);
@@ -245,27 +244,39 @@ const handelLogin = async () => {
 };
 
 const handelRegister = () => {
+
+  const uniqueEmail= allUsers.value.some(
+      (q) => q.email === registerEmail.value
+    ) || null;
+
+    if(uniqueEmail){
+      errorMessage.value = 'An account with this email already exists';
+
+      console.log('An account with this email already exists');
+}else{
+
   if (registerPassword.value === registerConfirmPassword.value) {
     userInfoReg.value.push({
       username: registerUsername.value,
-      email: registerEmail.value,
+      email: registerEmail.value.toLocaleLowerCase(),
       password: registerPassword.value,
       role: teacher.value ? 'teacher' : 'student',
     });
 
     LocalStorage.set('users', userInfoReg.value);
-    registerUsername.value = '';
-    registerEmail.value = '';
-    registerPassword.value = '';
-    teacher.value = false;
-    registerConfirmPassword.value = '';
+
   } else {
+errorMessage.value='Passwords do not match,please try again'
     console.log('there is an error');
-    registerUsername.value = '';
+
+  }
+
+}
+registerUsername.value = '';
     registerEmail.value = '';
     registerPassword.value = '';
     teacher.value = false;
     registerConfirmPassword.value = '';
-  }
+
 };
 </script>
