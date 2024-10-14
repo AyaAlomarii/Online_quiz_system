@@ -3,10 +3,10 @@
     <div class="br-8 row justify-between">
       <div class="row">
         <q-icon
-          name="description"
+          name="library_books"
           size="sm"
           class="q-pt-md q-mr-md"
-          color="red"
+           :color="Date.now()%2 ?'red-5':'blue-4'"
         />
         <div class="column text-h6">
           <span>

@@ -1,15 +1,15 @@
 <template>
   <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 q-pa-sm q-mt-sm q-pa-md">
 
-  
+
     <q-card class="q-pa-sm q-pb-lg bg-white text-black">
       <q-card-section class="br-8 row justify-between">
         <div class="row">
           <q-icon
-            name="description"
+            name="library_books"
             size="sm"
             class="q-pt-md q-mr-md"
-            color="black"
+             :color="Date.now()%2 ?'red-5':'blue-4'"
           />
           <div class="column text-h6">
             <span>

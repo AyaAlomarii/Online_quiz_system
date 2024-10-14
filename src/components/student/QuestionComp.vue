@@ -1,7 +1,8 @@
 <template>
-  <div class="row q-pa-sm justify-center height-271">
-    <div class="col-lg-11 col-xlg-11 col-md-8 col-sm-10 q-pa-none">
-      <div class="row justify-end text-h5 end-text">{{ timer }} min</div>
+  <div class="row justify-center">
+    <div class="column q-pa-sm justify-center  col-lg-10 col-xlg-10 col-md-9 col-sm-10 q-pa-none">
+      <q-btn dense flat size="lg" no-caps disable  class=" row justify-end end-text " text-color="red-7" align="right">{{ timer }} min</q-btn>
+
       <q-stepper
         v-model="step"
         ref="stepper"
@@ -57,7 +58,7 @@
       </q-stepper>
     </div>
 
-    <div class="row q-py-lg full-width justify-between">
+    <div class="row q-pa-md full-width justify-between">
       <q-btn
         :disable="step > 0 ? false : true"
         class="br-8 bg-attempt text-primary"
@@ -127,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, PropType, onBeforeUnmount, onMounted, toRaw } from 'vue';
+import { ref, PropType, onBeforeUnmount, onMounted } from 'vue';
 import { Quiz } from 'src/models/QuizModel';
 import DataObject from 'src/models/DataObject';
 import RoutesPaths from 'src/router/RoutesPaths';
@@ -191,7 +192,7 @@ onMounted(() => {
   allAnswers.value = currentQuiz.value?.answersObj || {};
   // Use the existing quizStartedAt or load it from local storage if needed
   let quizStartedAt: number = currentQuiz.value?.quizStartedAt;
-  console.log(currentQuiz.value.quizStartedAt);
+
 
   if (quizStartedAt) {
     quizStartedAt = currentQuiz.value.quizStartedAt;
@@ -214,15 +215,6 @@ onMounted(() => {
     `Quiz started at: ${quizStartedAt}, Now: ${now}, Diff: ${diffInSeconds} seconds`
   );
 
-  /*  if (diffInSeconds < 45 * 60) { // 45 minutes = 2700 seconds
-    console.log('User is still within the quiz time limit.');
-  } else {
-    console.log('Quiz time is up. Redirecting to result page.');
-    router.push({
-      path: RoutesPaths.RESULT_PAGE,
-      query: { quizName: props.quiz.name },
-    });
-  } */
 
   if (time.value <= 0) {
     console.log('Quiz time is up. Redirecting to the result page.');
@@ -278,10 +270,9 @@ const nextQuestion = (i: number) => {
     console.log(`Answer selected for question ${i + 1}:`, selectedAnswer.text);
   }
 
-  // currentQuiz.value.answersObj = allAnswers.value;
-  console.log(quizIndexInObj.value);
+;
   userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
-  console.log(userQuizzes.value);
+
 
   quizInfoByEmail.value[userEmail.value] = {
     user: currentUser.value,
@@ -293,9 +284,8 @@ const nextQuestion = (i: number) => {
   if (props.quiz.questions && step.value !== props.quiz.questions.length - 1) {
     step.value++;
 
-    console.log(allAnswers.value);
   } else {
-    console.log('last question ');
+
     //open submit dialog
     alert.value = true;
   }
@@ -313,10 +303,10 @@ const handelSubmit = () => {
     userQuizzes.value.find((q) => q.quiz.name === route.query.quizName) || null;
 
   currentQuiz.value.score = score.value;
-  console.log(currentQuiz.value);
+
 
   userQuizzes.value.splice(quizIndexInObj.value, 1, currentQuiz.value);
-  console.log(userQuizzes.value);
+
 
   quizInfoByEmail.value[userEmail.value] = {
     user: currentUser.value,
@@ -325,18 +315,12 @@ const handelSubmit = () => {
 
   LocalStorage.set('quizInfoByEmail', quizInfoByEmail.value);
 
-  console.log('Before:', toRaw(updatedQuiz.value));
-  console.log('Props:', currentQuiz.value?.quiz);
 
   // Safely update the quiz status
   if (currentQuiz.value.quiz) {
     currentQuiz.value.quiz.status = 'not active';
     updatedQuiz.value = currentQuiz.value.quiz;
-    console.log(
-      'Updated quiz status:',
-      currentQuiz.value.quiz.status,
-      props.quiz.name
-    );
+
     router.push({
       path: RoutesPaths.RESULT_PAGE,
       query: { quizName: currentQuiz.value.quiz.name },
@@ -344,7 +328,7 @@ const handelSubmit = () => {
   } else {
     console.error('Quiz object is missing!');
   }
-  console.log('af', updatedQuiz.value);
+
 
   const updateQuizActive = new UpdateQuiz();
 
@@ -367,7 +351,6 @@ const startTimer = () => {
     } else {
       // Time is up, clear the interval and submit the quiz
       clearInterval(instance);
-      console.log('Time is up! Submitting the quiz.');
       showNotify();
       handelSubmit();
     }
@@ -391,15 +374,5 @@ const showNotify = () => {
   });
 };
 
-// Watch the timerValue ref
-/* watch(timer, (newVal, oldVal) => {
-  onTimerChange();
 
-
-  // console.log(`The value changed from ${oldVal} to ${newVal}`); // Run this function whenever the timer changes
-}); */
-
-//!attempt if date .now
-//Save the start time let say 12.00
-//when its 12:45 the timer will stop
 </script>

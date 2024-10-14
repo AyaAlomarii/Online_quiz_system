@@ -11,7 +11,7 @@
       <q-btn
         flat
         no-caps
-        class="q-ml-none q-px-sm text-caption text-primary"
+        class="q-ml-none q-px-sm text-body2 text-primary"
         @click="()=>{
           $router.push({
         path: 'https://www.digitalpages.com'
