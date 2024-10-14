@@ -55,7 +55,6 @@ import DataObject from '@/models/DataObject';
 import { ref } from 'vue';
 import UserModel from '@/models/UserModel';
 import { newQuiz, infoQuiz } from 'src/models/QuizLocalModel';
-const currentQuiz = ref<newQuiz>();
 
 const allAnswers = ref<DataObject>({});
 
@@ -104,6 +103,7 @@ const handelAttempt = (quizName: string) => {
     quizStartedAt = existingQuiz.quizStartedAt;
   } else {
     quizStartedAt = Date.now();
+// props.quiz?.questions
 
     const newQuizEntry: newQuiz = {
       quiz: props.quiz,

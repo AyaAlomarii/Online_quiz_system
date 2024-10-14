@@ -178,6 +178,9 @@ body {
   .width-900 {
     min-width: 900px !important; /* Adjust according to your design */
   }
+  .width-460{
+    width: 460 !important;
+  }
 }
 @media screen and (max-width: 920px) {
   .width-900 {
@@ -189,6 +192,9 @@ body {
   .width-900 {
     width: 70% !important; /* Or another percentage that fits your design */
     min-width: 500px !important; /* Optional, if you still want to limit the width */
+  }
+  .width-460{
+    width: 370px !important;
   }
 }
 
