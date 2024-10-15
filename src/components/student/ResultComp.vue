@@ -24,11 +24,10 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="column text-body2 text-grey q-py-none">
+      <q-card-section class="column text-body2 text-grey q-pt-none q-pb-md ">
         <span>{{ quiz.teacher }}</span>
         <span> {{ quiz.points }}/50 Point</span>
         <span> {{ quiz.students }} Student</span>
-        <div class="row justify-end"></div>
       </q-card-section>
     </q-card>
   </div>
@@ -36,7 +35,7 @@
 
 <script setup lang="ts">
 import { PropType } from 'vue';
-import Quiz from '../../models/QuizModel';
+import Quiz from 'src/models/QuizModel';
 
 defineProps({
   quiz: {

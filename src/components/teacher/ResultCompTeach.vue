@@ -24,11 +24,10 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="column text-body2 text-grey q-py-none">
+      <q-card-section class="column text-body2 text-grey q-pt-none q-pb-md ">
         <span>{{ quiz.teacher }}</span>
         <span> {{ quiz.points }} Point</span>
         <span> {{ quiz.students }} Student</span>
-        <div class="row justify-end"></div>
       </q-card-section>
     </q-card>
   </div>

@@ -7,7 +7,7 @@
             name="library_books"
             size="sm"
             class="q-pt-md q-mr-md"
-            :color="Date.now()%2 ?'red-5':'blue-4'"
+            :color="Date.now() % 2 ? 'red-5' : 'blue-4'"
           />
           <div class="column text-h6">
             <span>
@@ -37,7 +37,7 @@
             :color="quiz?.status === 'active' ? 'bg-attempt' : 'grey-4'"
             :text-color="quiz?.status === 'active' ? 'bg-attempt' : 'grey-7'"
             :disable="quiz?.status === 'active' ? false : true"
-            @click="() => handelAttempt(quiz.name)"
+            @click="() => handleAttempt(quiz.name)"
             >Attempt</q-btn
           >
           <!-- formattedTime===props.quiz?.start ? false : true -->
@@ -74,6 +74,7 @@ const userQuizzes = ref<newQuiz[]>(
 );
 
 const router = useRouter();
+
 const props = defineProps({
   quiz: {
     type: Object as PropType<Quiz>,
@@ -102,7 +103,7 @@ const showNotify = () => {
 //! the idea is to end after 45 min from what he started
 //! convert the 45  diff to local storage not a static value
 
-const handelAttempt = (quizName: string) => {
+const handleAttempt = (quizName: string) => {
   const existingQuiz = userQuizzes.value.find(
     (entry: newQuiz) => entry.quiz.name === props.quiz.name
   );
@@ -149,7 +150,6 @@ const handelAttempt = (quizName: string) => {
       query: { quizName: props.quiz.name },
     });
 
-    console.log('the time is up', props.quiz.name);
     showNotify();
   }
 };

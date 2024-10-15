@@ -27,6 +27,7 @@
                 size="sm"
                 class="q-pr-sm"
                 color="yellow"
+                
               />
               Question {{ i + 1 }}
             </div>

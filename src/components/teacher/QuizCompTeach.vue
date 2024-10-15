@@ -8,8 +8,10 @@
           <q-icon
             name="library_books"
             size="sm"
-            class="q-pt-md q-mr-md"
+            class="q-pt-md q-mr-md "
              :color="Date.now()%2 ?'red-5':'blue-4'"
+             rounded
+             
           />
           <div class="column text-h6">
             <span>
