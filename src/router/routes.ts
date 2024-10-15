@@ -2,18 +2,18 @@ import { RouteRecordRaw } from 'vue-router';
 import RoutesPaths from './RoutesPaths';
 const routes: RouteRecordRaw[] = [
   {
-    path: '',
+    path: '/',
     component: () => import('../layouts/AccessLayout.vue'),
     children: [
       {
-        path: RoutesPaths.LOGIN,
+        path: '',
         component: () => import('../pages/access/LoginPage.vue'),
       },
     ],
   },
 
   {
-    path: '',
+    path: '/',
     component: () => import('../layouts/StudentLayout.vue'),
     children: [
       {
@@ -42,7 +42,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '',
+    path: '/',
     component: () => import('src/layouts/TeacherLayout.vue'),
     children: [
       {
