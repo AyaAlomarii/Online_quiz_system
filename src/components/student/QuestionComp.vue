@@ -19,7 +19,7 @@
           :title="`q-${i}`"
           icon="settings"
           :done="step > 1"
-          
+
         >
           <div class="row q-pb-sm items-center justify-between">
             <div class="text-h6">
@@ -208,7 +208,7 @@ onMounted(() => {
 
   const now = Date.now();
   const diffInSeconds = Math.floor((now - quizStartedAt) / 1000);
-  // Set the remaining time (in seconds), ensuring it doesn't go negative
+
   const totalQuizTime = 45 * 60; // 45 minutes in seconds
   time.value = Math.max(totalQuizTime - diffInSeconds, 0);
   console.log(time.value);
@@ -235,14 +235,14 @@ const handelScore = () => {
 
   // Loop through each question
   props.quiz?.questions?.forEach((ele, questionIndex) => {
-    const selectedAnswer = allAnswers.value[questionIndex]; // Get selected answer object for this question
+    const selectedAnswer = allAnswers.value[questionIndex];
 
     if (selectedAnswer) {
       ele.options.forEach((op) => {
-        // Check if the selected answer's text matches the correct option
+
         if (op.correct && op.text === selectedAnswer) {
           console.log(op.correct, selectedAnswer.text, 'right');
-          score.value += ele.point; // Add points for correct answer
+          score.value += ele.point; 
         } else {
           console.log(op.correct, selectedAnswer, 'wrong');
         }

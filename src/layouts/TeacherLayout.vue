@@ -1,23 +1,22 @@
 <template>
   <q-layout class="bg-bg-grey">
     <div
-        class="col-auto bg-transparent q-px-md q-pb-none q-pt-sm row justify-between items-center"
-
-      >
-        <span class="text-h6 text-primary">Online Quiz System</span>
-        <q-btn
-          flat
-          :to="Routes.LOGIN"
-          @click="
-            () => {
-               SessionUtil.logout();
-            }
-          "
-          icon="logout"
-        />
-      </div>
+      class="col-auto bg-transparent q-px-md q-pb-none q-pt-sm row justify-between items-center"
+    >
+      <span class="text-h6 text-primary">Online Quiz System</span>
+      <q-btn
+        flat
+        ::to='Routes.LOGIN'
+        @click="
+          () => {
+            SessionUtil.logout();
+          }
+        "
+        icon="logout"
+      />
+    </div>
     <!-- Header -->
-    <q-card class="height-365 q-ma-md br-8">
+    <q-card class="q-ma-md br-8">
       <q-card-section class="no-padding">
         <q-img src="/student/header.svg" class="br-t-8 h-250" />
       </q-card-section>
@@ -49,7 +48,6 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
   </q-layout>
 </template>
 

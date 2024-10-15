@@ -7,7 +7,7 @@
         <span class="text-h6 text-primary">Online Quiz System</span>
         <q-btn
           flat
-          :to="Routes.LOGIN"
+          :to='Routes.LOGIN'
           @click="
             () => {
                SessionUtil.logout();
@@ -17,7 +17,7 @@
         />
       </div>
     <!-- Header -->
-    <q-card class="height-365 q-ma-md br-8">
+    <q-card class="col-auto q-ma-md br-8">
       <q-card-section class="no-padding">
         <q-img src="/student/header.svg" class="br-t-8 h-250" />
       </q-card-section>
@@ -48,7 +48,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    
+
 
 
   </q-layout>
@@ -60,9 +60,8 @@ import { LocalStorage } from 'quasar';
 import { onMounted, ref } from 'vue';
 import SessionUtil from 'src/util/SessionUtil';
 import Routes from 'src/router/RoutesPaths';
-
 // variables
-const userInfo = ref<UserModel | null>(null); // Initialize with null
+const userInfo = ref<UserModel | null>(null);
 
 onMounted(() => {
   const storedUser = LocalStorage.getItem('currentUser') as UserModel | null;

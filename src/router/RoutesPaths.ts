@@ -1,6 +1,6 @@
 export default class Routes {
   //!access
-  public static readonly LOGIN = '/login';
+  public static readonly LOGIN = '/';
 
   //!Student
   public static readonly STUDENT = '/student';
