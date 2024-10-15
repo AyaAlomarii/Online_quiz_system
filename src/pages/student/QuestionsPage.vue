@@ -19,28 +19,16 @@ import Quiz from 'src/models/QuizModel';
 import GetAllQuizzes from 'src/functions/GetAllQuizzesFun';
 
 
-
-// import eventBus from 'src/EventBus/EventBus'
-
 const route = useRoute();
 const quiz = ref<Quiz>();
 
 const quizzes = ref<Quiz[]>([]);
 
-
-
-//  const newData=computed(()=>{
-//   return eventBus.quizVar
-// })
 onMounted(async() => {
   const quizzesTwo = new GetAllQuizzes();
   quizzes.value = (await quizzesTwo.executeAsync()) as Quiz[];
   const quizName= route.query.quizName as string;
   quiz.value = quizzes.value.find((q) => quizName === q?.name) || null;
-
-
-
-
 });
 
 

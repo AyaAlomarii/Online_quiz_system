@@ -1,6 +1,6 @@
 <template>
   <div class="row justify-center">
-    <div class="column q-pa-sm justify-center  col-lg-10 col-xlg-10 col-md-9 col-sm-10 q-pa-none">
+    <div class="column q-pa-sm justify-center  col-10 q-pa-none ">
       <q-btn dense flat size="lg" no-caps disable  class=" row justify-end end-text " text-color="red-7" align="right">{{ timer }} min</q-btn>
 
       <q-stepper
@@ -19,6 +19,7 @@
           :title="`q-${i}`"
           icon="settings"
           :done="step > 1"
+          
         >
           <div class="row q-pb-sm items-center justify-between">
             <div class="text-h6">
@@ -27,7 +28,7 @@
                 size="sm"
                 class="q-pr-sm"
                 color="yellow"
-                
+
               />
               Question {{ i + 1 }}
             </div>
